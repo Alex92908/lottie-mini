@@ -53,12 +53,12 @@ export default function PreviewPage() {
         </div>
       </main>
 
-      <footer style={{ borderTop: "1px solid var(--border)", padding: "24px 0", textAlign: "center" }}>
-        <div className="container" style={{ color: "var(--muted)", fontSize: 13 }}>
-          lottie-mini · MIT ·{" "}
-          <a href="https://github.com/Alex92908/lottie-mini" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
+      <footer>
+        <div className="container">
+          <p style={{ fontSize: 13, color: "var(--muted)" }}>
+            lottie-mini ·{" "}
+            <a href="https://github.com/Alex92908/lottie-mini" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </p>
         </div>
       </footer>
     </>
