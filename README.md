@@ -2,7 +2,13 @@
 
 **Compress image-sequence Lottie files by 50–100×, with a desktop GUI.**
 
-[中文说明](#中文说明) · [Demo](https://lottie-mini.vercel.app) · [Download](#installation)
+[![Landing page](https://img.shields.io/badge/website-lottie--mini.vercel.app-7c6dfa?style=flat-square&logo=vercel)](https://lottie-mini.vercel.app)
+[![Live preview tool](https://img.shields.io/badge/preview_tool-lottie--mini.vercel.app%2Fpreview-4ade80?style=flat-square&logo=vercel)](https://lottie-mini.vercel.app/preview)
+
+> **🌐 Landing page:** https://lottie-mini.vercel.app
+> **🎬 Lottie Preview Tool:** https://lottie-mini.vercel.app/preview
+
+[中文说明](#中文说明) · [Install](#installation)
 
 ---
 
@@ -104,6 +110,9 @@ MIT
 ## 中文说明
 
 把内嵌 PNG 帧序列的 Lottie 文件压缩 50–100 倍，带桌面 GUI。
+
+> **🌐 项目主页：** https://lottie-mini.vercel.app
+> **🎬 在线预览工具：** https://lottie-mini.vercel.app/preview
 
 **安装和运行：**
 
