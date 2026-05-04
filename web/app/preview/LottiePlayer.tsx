@@ -18,7 +18,8 @@ function formatMB(bytes: number) {
 function parseInfo(json: Record<string, unknown>): Omit<FileState, "name" | "sizeMB"> {
   const assets = (json.assets as unknown[]) ?? [];
   const frames = assets.filter(
-    (a) => typeof (a as Record<string, unknown>).p === "string" &&
+    (a) =>
+      typeof (a as Record<string, unknown>).p === "string" &&
       ((a as Record<string, unknown>).p as string).startsWith("data:")
   ).length;
   return {
@@ -33,9 +34,30 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<AnimationItem | null>(null);
   const [info, setInfo] = useState<FileState | null>(null);
+  // pendingJson is set first; useEffect fires after DOM update and starts animation
+  const [pendingJson, setPendingJson] = useState<unknown>(null);
   const [dragging, setDragging] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [error, setError] = useState("");
+
+  // Start animation after the canvas div is in the DOM
+  useEffect(() => {
+    if (!pendingJson || !containerRef.current) return;
+    if (animRef.current) { animRef.current.destroy(); animRef.current = null; }
+    animRef.current = lottie.loadAnimation({
+      container: containerRef.current,
+      renderer: "canvas",
+      loop: true,
+      autoplay: true,
+      animationData: pendingJson as object,
+      rendererSettings: {
+        clearCanvas: true,
+        preserveAspectRatio: "xMidYMid meet",
+      },
+    });
+    setPlaying(true);
+    setPendingJson(null);
+  }, [pendingJson, info]); // info dep ensures the div exists before we fire
 
   const load = useCallback((file: File) => {
     setError("");
@@ -43,57 +65,59 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
     reader.onload = (e) => {
       try {
         const json = JSON.parse(e.target?.result as string);
-        if (animRef.current) animRef.current.destroy();
-        if (containerRef.current) {
-          animRef.current = lottie.loadAnimation({
-            container: containerRef.current,
-            renderer: "canvas",
-            loop: true,
-            autoplay: true,
-            animationData: json,
-            rendererSettings: {
-              clearCanvas: true,
-              progressiveLoad: true,
-              preserveAspectRatio: "xMidYMid meet",
-            },
-          });
-          setPlaying(true);
-        }
+        // Set info first → triggers re-render → div appears → useEffect fires
         setInfo({
           name: file.name,
           sizeMB: formatMB(file.size),
-          ...parseInfo(json),
+          ...parseInfo(json as Record<string, unknown>),
         });
+        setPendingJson(json);
       } catch {
-        setError(lang === "en" ? "Invalid JSON — is this a Lottie file?" : "JSON 解析失败，请确认是 Lottie 文件");
+        setError(
+          lang === "en"
+            ? "Invalid JSON — is this a Lottie file?"
+            : "JSON 解析失败，请确认是 Lottie 文件"
+        );
       }
     };
     reader.readAsText(file);
   }, [lang]);
 
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) load(file);
-  }, [load]);
+  const onDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragging(false);
+      const file = e.dataTransfer.files[0];
+      if (file) load(file);
+    },
+    [load]
+  );
 
-  const onFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) load(file);
-  }, [load]);
+  const onFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) load(file);
+    },
+    [load]
+  );
 
   const togglePlay = () => {
     if (!animRef.current) return;
-    if (playing) { animRef.current.pause(); setPlaying(false); }
-    else { animRef.current.play(); setPlaying(true); }
+    if (playing) {
+      animRef.current.pause();
+      setPlaying(false);
+    } else {
+      animRef.current.play();
+      setPlaying(true);
+    }
   };
 
   useEffect(() => () => { animRef.current?.destroy(); }, []);
 
-  const ph = lang === "en"
-    ? { drop: "Drop Lottie JSON here", or: "or click to browse", hint: "No size limit · 100% local" }
-    : { drop: "拖入 Lottie JSON", or: "或点击选择文件", hint: "无大小限制 · 完全本地处理" };
+  const ph =
+    lang === "en"
+      ? { drop: "Drop Lottie JSON here", or: "or click to browse", hint: "No size limit · 100% local" }
+      : { drop: "拖入 Lottie JSON", or: "或点击选择文件", hint: "无大小限制 · 完全本地处理" };
 
   return (
     <div className="player-card">
@@ -137,11 +161,14 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
             <span className="info-size">{info.sizeMB} MB</span>
           </div>
           <div className="info-meta">
-            {info.w}×{info.h} · {info.fps} fps · {info.frames} {lang === "en" ? "img frames" : "图片帧"}
+            {info.w}×{info.h} · {info.fps} fps ·{" "}
+            {info.frames} {lang === "en" ? "img frames" : "图片帧"}
           </div>
           <div className="info-actions">
             <button className="ctrl-btn" onClick={togglePlay}>
-              {playing ? "⏸" : "▶"} {playing ? (lang === "en" ? "Pause" : "暂停") : (lang === "en" ? "Play" : "播放")}
+              {playing
+                ? `⏸ ${lang === "en" ? "Pause" : "暂停"}`
+                : `▶ ${lang === "en" ? "Play" : "播放"}`}
             </button>
             <label className="ctrl-btn" style={{ cursor: "pointer" }}>
               📂 {lang === "en" ? "Load another" : "重新加载"}
@@ -155,9 +182,10 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
 }
 
 export default function LottiePreview({ lang }: { lang: "en" | "zh" }) {
-  const labels = lang === "en"
-    ? ["Before (original)", "After (compressed)"]
-    : ["压缩前（原始）", "压缩后（结果）"];
+  const labels =
+    lang === "en"
+      ? ["Before (original)", "After (compressed)"]
+      : ["压缩前（原始）", "压缩后（结果）"];
 
   return (
     <div className="preview-grid">
