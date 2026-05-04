@@ -19,6 +19,7 @@ export default function Home() {
           <div className="nav-links">
             <a href="#how">{t.nav.how}</a>
             <a href="#install">{t.nav.install}</a>
+            <Link href="/compress">{t.nav.compress}</Link>
             <Link href="/preview">{t.nav.preview}</Link>
             <a href={GITHUB} target="_blank" rel="noopener noreferrer">{t.nav.github}</a>
             <button className="lang-toggle" onClick={toggle}>
@@ -165,20 +166,25 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Preview CTA */}
+          {/* Tools CTA */}
           <div className="preview-cta">
-            <div className="section-label">{lang === "en" ? "Live Preview" : "在线预览"}</div>
+            <div className="section-label">{lang === "en" ? "Browser Tools" : "在线工具"}</div>
             <h2 className="section-heading" style={{ marginBottom: 16 }}>
-              {lang === "en" ? "Preview any Lottie file — no size limit" : "预览任意 Lottie 文件，无大小限制"}
+              {lang === "en" ? "No install? Use the web tools." : "不想装 Python？直接用网页版"}
             </h2>
             <p style={{ color: "var(--muted)", fontSize: 15, marginBottom: 28 }}>
               {lang === "en"
-                ? "Drop your before and after files to visually compare them. Runs 100% in your browser — nothing is uploaded."
-                : "拖入压缩前后的文件，直观对比效果。完全在浏览器本地运行，不上传任何数据。"}
+                ? "Compress and preview Lottie files entirely in your browser — no upload, no size limit, nothing installed."
+                : "压缩和预览全在浏览器里完成——不上传、无大小限制、无需安装任何东西。"}
             </p>
-            <Link href="/preview" className="btn btn-primary" style={{ display: "inline-flex" }}>
-              {lang === "en" ? "Open Lottie Preview →" : "打开 Lottie 预览器 →"}
-            </Link>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <Link href="/compress" className="btn btn-primary" style={{ display: "inline-flex" }}>
+                {lang === "en" ? "🗜 Compress online →" : "🗜 在线压缩 →"}
+              </Link>
+              <Link href="/preview" className="btn btn-ghost" style={{ display: "inline-flex" }}>
+                {lang === "en" ? "🎬 Preview & compare →" : "🎬 预览对比 →"}
+              </Link>
+            </div>
           </div>
         </div>
       </main>

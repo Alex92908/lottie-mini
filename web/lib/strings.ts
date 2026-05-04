@@ -5,6 +5,7 @@ export const strings = {
     nav: {
       how: "How it works",
       install: "Install",
+      compress: "Compress",
       preview: "Preview",
       github: "GitHub ↗",
     },
@@ -77,6 +78,7 @@ export const strings = {
     nav: {
       how: "工作原理",
       install: "安装",
+      compress: "在线压缩",
       preview: "在线预览",
       github: "GitHub ↗",
     },
