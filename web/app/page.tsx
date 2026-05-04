@@ -378,16 +378,6 @@ export default function Home() {
         </div>
       </main>
 
-      <footer>
-        <div className="container">
-          <p style={{ fontSize: 13, color: "var(--muted)" }}>
-            lottie-mini · MIT ·{" "}
-            <a href={GITHUB} target="_blank" rel="noopener noreferrer">GitHub</a>
-            {" · "}
-            <Link href="/preview">{t.preview}</Link>
-          </p>
-        </div>
-      </footer>
     </>
   );
 }
