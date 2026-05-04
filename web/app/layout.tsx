@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import { LangProvider } from "../lib/LangContext";
 import "./globals.css";
 
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <LangProvider>{children}</LangProvider>
+        <Analytics />
         {ADSENSE_CLIENT && (
           <Script
             async
