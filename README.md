@@ -6,7 +6,17 @@
 
 ---
 
-![lottie-mini GUI](docs/screenshot.png)
+**GUI — English / 中文 toggle built in:**
+
+| English | 中文 |
+|---------|------|
+| ![English UI](docs/screenshot_en.png) | ![中文界面](docs/screenshot_zh.png) |
+
+**Live preview tool ([lottie-mini.vercel.app/preview](https://lottie-mini.vercel.app/preview)):**
+
+| Before vs After | 压缩前后对比 |
+|----------------|-------------|
+| ![Preview EN](docs/preview_en.png) | ![预览中文](docs/preview_zh.png) |
 
 ## What it does
 

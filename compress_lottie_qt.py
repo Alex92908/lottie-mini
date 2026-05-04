@@ -157,9 +157,9 @@ def _load_lang() -> str:
     try:
         with open(_LANG_FILE) as f:
             v = f.read().strip()
-            return v if v in ("en", "zh") else "zh"
+            return v if v in ("en", "zh") else "en"
     except OSError:
-        return "zh"
+        return "en"
 
 
 def _save_lang(lang: str):

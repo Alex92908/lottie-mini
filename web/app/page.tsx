@@ -49,9 +49,13 @@ export default function Home() {
         </section>
 
         <div className="container">
-          {/* Screenshot */}
+          {/* Screenshot — switches with language */}
           <div className="screenshot-wrap">
-            <img src="/screenshot.png" alt="lottie-mini GUI screenshot" className="screenshot" />
+            <img
+              src={lang === "zh" ? "/screenshot_zh.png" : "/screenshot_en.png"}
+              alt="lottie-mini GUI screenshot"
+              className="screenshot"
+            />
           </div>
 
           {/* Stats */}
