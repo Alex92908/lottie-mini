@@ -47,10 +47,15 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
         if (containerRef.current) {
           animRef.current = lottie.loadAnimation({
             container: containerRef.current,
-            renderer: "svg",
+            renderer: "canvas",
             loop: true,
             autoplay: true,
             animationData: json,
+            rendererSettings: {
+              clearCanvas: true,
+              progressiveLoad: true,
+              preserveAspectRatio: "xMidYMid meet",
+            },
           });
           setPlaying(true);
         }

@@ -21,9 +21,153 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
     QApplication, QCheckBox, QComboBox, QFileDialog, QFormLayout,
     QGroupBox, QHBoxLayout, QLabel, QLineEdit, QMainWindow, QMessageBox,
-    QProgressBar, QPushButton, QRadioButton, QSlider, QSpinBox, QTextEdit,
+    QProgressBar, QPushButton, QRadioButton, QSlider, QTextEdit,
     QVBoxLayout, QWidget,
 )
+
+# ---------- 多语言字符串 ----------
+
+STRINGS = {
+    "zh": {
+        "window_title": "Lottie 压缩工具",
+        "lang_btn": "EN",
+        "file_group": "文件",
+        "input_label": "输入:",
+        "output_label": "输出:",
+        "browse": "浏览...",
+        "preset_group": "预设",
+        "presets": [
+            ("quality",  "质量优先 (~3% 大小)",     "全帧 WebP q75"),
+            ("balanced", "均衡 (~1.5%) ⭐ 推荐",     "抽帧到一半 + WebP q75"),
+            ("smallest", "极小 (~1%)",               "抽帧 + 缩到 600 宽 + q70"),
+            ("lossless", "无损 (~50-70%)",            "WebP lossless，视觉无差"),
+            ("custom",   "自定义",                   "下方手动设参数"),
+        ],
+        "param_group": "参数（自定义模式生效）",
+        "quality_label": "WebP 质量:",
+        "stride_label": "抽帧步长:",
+        "stride_note": "(1=全帧, 2=15fps, 3=保留1/3)",
+        "width_label": "目标宽度:",
+        "width_note": "(留空=保持原尺寸，高度自动)",
+        "width_placeholder": "空",
+        "format_label": "输出格式:",
+        "lossless_cb": "无损（仅 WebP）",
+        "analyze_btn": "分析输入文件",
+        "run_btn": "开始压缩",
+        "log_group": "日志",
+        "status_ready": "就绪",
+        "status_processing": "正在处理...",
+        "status_done": "✓ 完成",
+        "status_failed": "✗ 失败",
+        # 对话框
+        "dlg_error": "错误",
+        "dlg_analysis_failed": "分析失败",
+        "dlg_compress_failed": "压缩失败",
+        "dlg_processing": "正在处理",
+        "dlg_processing_msg": "请等待当前任务完成",
+        "dlg_done": "完成",
+        "dlg_done_msg": "压缩完成！是否打开输出文件夹？",
+        "err_no_input": "请选择有效的输入文件",
+        "err_no_output": "请指定输出文件",
+        "err_same_path": "输出路径不能和输入相同",
+        "err_bad_width": "目标宽度必须是正整数或留空",
+        "pick_input_title": "选择 Lottie JSON",
+        "pick_output_title": "保存为",
+        # 分析日志
+        "log_file_info": "=== 文件信息 ===",
+        "log_file_size": "文件大小",
+        "log_version": "Lottie 版本",
+        "log_canvas": "画布",
+        "log_duration": "动画时长",
+        "log_img_frames": "内嵌图片帧",
+        "log_frame_fmt": "帧格式",
+        "log_frame_size": "帧尺寸",
+        "log_avg_frame": "平均每帧 base64 长度",
+        "log_suitable": "✓ 此文件适合用本工具压缩",
+        "log_no_frames": "⚠ 此文件没有内嵌图片帧（可能是矢量 Lottie），本工具无效",
+        "log_sec": "秒",
+        "log_frames_unit": "帧",
+    },
+    "en": {
+        "window_title": "Lottie Compress Tool",
+        "lang_btn": "中文",
+        "file_group": "File",
+        "input_label": "Input:",
+        "output_label": "Output:",
+        "browse": "Browse...",
+        "preset_group": "Preset",
+        "presets": [
+            ("quality",  "Quality first (~3%)",          "All frames · WebP q75"),
+            ("balanced", "Balanced (~1.5%) ⭐ Recommended", "Half frames + WebP q75"),
+            ("smallest", "Smallest (~1%)",               "Half frames + 600px wide + q70"),
+            ("lossless", "Lossless (~50-70%)",            "WebP lossless, visually identical"),
+            ("custom",   "Custom",                       "Set parameters below"),
+        ],
+        "param_group": "Parameters (custom mode only)",
+        "quality_label": "WebP Quality:",
+        "stride_label": "Frame Stride:",
+        "stride_note": "(1=all frames, 2=15fps, 3=keep 1/3)",
+        "width_label": "Target Width:",
+        "width_note": "(blank=keep original, height auto)",
+        "width_placeholder": "blank",
+        "format_label": "Output Format:",
+        "lossless_cb": "Lossless (WebP only)",
+        "analyze_btn": "Analyze Input",
+        "run_btn": "Start Compress",
+        "log_group": "Log",
+        "status_ready": "Ready",
+        "status_processing": "Processing...",
+        "status_done": "✓ Done",
+        "status_failed": "✗ Failed",
+        # dialogs
+        "dlg_error": "Error",
+        "dlg_analysis_failed": "Analysis failed",
+        "dlg_compress_failed": "Compression failed",
+        "dlg_processing": "Processing",
+        "dlg_processing_msg": "Please wait for the current task to finish",
+        "dlg_done": "Done",
+        "dlg_done_msg": "Compression complete! Open output folder?",
+        "err_no_input": "Please select a valid input file",
+        "err_no_output": "Please specify an output file",
+        "err_same_path": "Output path cannot be the same as input",
+        "err_bad_width": "Target width must be a positive integer or blank",
+        "pick_input_title": "Select Lottie JSON",
+        "pick_output_title": "Save as",
+        # analyze log
+        "log_file_info": "=== File Info ===",
+        "log_file_size": "File size",
+        "log_version": "Lottie version",
+        "log_canvas": "Canvas",
+        "log_duration": "Duration",
+        "log_img_frames": "Embedded image frames",
+        "log_frame_fmt": "Frame format",
+        "log_frame_size": "Frame size",
+        "log_avg_frame": "Avg frame base64 length",
+        "log_suitable": "✓ This file is suitable for compression",
+        "log_no_frames": "⚠ No embedded image frames (may be vector Lottie). This tool cannot help.",
+        "log_sec": "s",
+        "log_frames_unit": "frames",
+    },
+}
+
+_LANG_FILE = os.path.expanduser("~/.lottie_mini_lang")
+
+
+def _load_lang() -> str:
+    try:
+        with open(_LANG_FILE) as f:
+            v = f.read().strip()
+            return v if v in ("en", "zh") else "zh"
+    except OSError:
+        return "zh"
+
+
+def _save_lang(lang: str):
+    try:
+        with open(_LANG_FILE, "w") as f:
+            f.write(lang)
+    except OSError:
+        pass
 
 
 # ---------- 核心压缩逻辑 ----------
@@ -250,9 +394,9 @@ class CompressWorker(QThread):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Lottie 压缩工具")
-        self.resize(720, 760)
+        self._lang = _load_lang()
         self.worker = None
+        self.resize(720, 760)
 
         central = QWidget()
         self.setCentralWidget(central)
@@ -260,55 +404,51 @@ class MainWindow(QMainWindow):
         root.setContentsMargins(12, 12, 12, 12)
 
         # ---- 文件区 ----
-        file_box = QGroupBox("文件")
-        file_layout = QFormLayout(file_box)
+        self._file_box = QGroupBox()
+        file_layout = QFormLayout(self._file_box)
 
         in_row = QHBoxLayout()
         self.in_edit = QLineEdit()
-        in_btn = QPushButton("浏览...")
-        in_btn.clicked.connect(self._pick_input)
+        self._in_btn = QPushButton()
+        self._in_btn.clicked.connect(self._pick_input)
         in_row.addWidget(self.in_edit)
-        in_row.addWidget(in_btn)
-        file_layout.addRow("输入:", _wrap(in_row))
+        in_row.addWidget(self._in_btn)
+        self._in_label = QLabel()
+        file_layout.addRow(self._in_label, _wrap(in_row))
 
         out_row = QHBoxLayout()
         self.out_edit = QLineEdit()
-        out_btn = QPushButton("浏览...")
-        out_btn.clicked.connect(self._pick_output)
+        self._out_btn = QPushButton()
+        self._out_btn.clicked.connect(self._pick_output)
         out_row.addWidget(self.out_edit)
-        out_row.addWidget(out_btn)
-        file_layout.addRow("输出:", _wrap(out_row))
-        root.addWidget(file_box)
+        out_row.addWidget(self._out_btn)
+        self._out_label = QLabel()
+        file_layout.addRow(self._out_label, _wrap(out_row))
+        root.addWidget(self._file_box)
 
         # ---- 预设 ----
-        preset_box = QGroupBox("预设")
-        preset_layout = QVBoxLayout(preset_box)
+        self._preset_box = QGroupBox()
+        preset_layout = QVBoxLayout(self._preset_box)
         self.preset_radios = {}
-        presets = [
-            ("quality", "质量优先 (~3% 大小)", "全帧 WebP q75"),
-            ("balanced", "均衡 (~1.5%) ⭐ 推荐", "抽帧到一半 + WebP q75"),
-            ("smallest", "极小 (~1%)", "抽帧 + 缩到 600 宽 + q70"),
-            ("lossless", "无损 (~50-70%)", "WebP lossless，视觉无差"),
-            ("custom", "自定义", "下方手动设参数"),
-        ]
-        for val, label, desc in presets:
+        self._preset_radio_labels = {}   # val -> (QRadioButton, QLabel)
+        for val, _, _ in STRINGS["zh"]["presets"]:
             row = QHBoxLayout()
-            rb = QRadioButton(label)
+            rb = QRadioButton()
             rb.toggled.connect(lambda checked, v=val: checked and self._apply_preset(v))
             self.preset_radios[val] = rb
+            desc_lbl = QLabel()
+            desc_lbl.setStyleSheet("color: gray;")
+            self._preset_radio_labels[val] = (rb, desc_lbl)
             row.addWidget(rb)
-            note = QLabel(desc)
-            note.setStyleSheet("color: gray;")
-            row.addWidget(note)
+            row.addWidget(desc_lbl)
             row.addStretch()
             preset_layout.addLayout(row)
-        root.addWidget(preset_box)
+        root.addWidget(self._preset_box)
 
         # ---- 参数 ----
-        param_box = QGroupBox("参数（自定义模式生效）")
-        param_layout = QFormLayout(param_box)
+        self._param_box = QGroupBox()
+        param_layout = QFormLayout(self._param_box)
 
-        # 质量
         q_row = QHBoxLayout()
         self.q_slider = QSlider(Qt.Orientation.Horizontal)
         self.q_slider.setMinimum(30)
@@ -319,57 +459,61 @@ class MainWindow(QMainWindow):
         self.q_slider.valueChanged.connect(lambda v: self.q_label.setText(str(v)))
         q_row.addWidget(self.q_slider)
         q_row.addWidget(self.q_label)
-        param_layout.addRow("WebP 质量:", _wrap(q_row))
+        self._q_row_label = QLabel()
+        param_layout.addRow(self._q_row_label, _wrap(q_row))
 
-        # 抽帧
         s_row = QHBoxLayout()
         self.stride_combo = QComboBox()
         self.stride_combo.addItems(["1", "2", "3", "4"])
         self.stride_combo.setCurrentText("2")
         self.stride_combo.setMaximumWidth(80)
+        self._s_note = QLabel()
+        self._s_note.setStyleSheet("color: gray;")
         s_row.addWidget(self.stride_combo)
-        s_note = QLabel("(1=全帧, 2=15fps, 3=保留1/3)")
-        s_note.setStyleSheet("color: gray;")
-        s_row.addWidget(s_note)
+        s_row.addWidget(self._s_note)
         s_row.addStretch()
-        param_layout.addRow("抽帧步长:", _wrap(s_row))
+        self._s_row_label = QLabel()
+        param_layout.addRow(self._s_row_label, _wrap(s_row))
 
-        # 宽度
         w_row = QHBoxLayout()
         self.width_edit = QLineEdit()
         self.width_edit.setMaximumWidth(100)
-        self.width_edit.setPlaceholderText("空")
+        self._w_note = QLabel()
+        self._w_note.setStyleSheet("color: gray;")
         w_row.addWidget(self.width_edit)
-        w_note = QLabel("(留空=保持原尺寸，高度自动)")
-        w_note.setStyleSheet("color: gray;")
-        w_row.addWidget(w_note)
+        w_row.addWidget(self._w_note)
         w_row.addStretch()
-        param_layout.addRow("目标宽度:", _wrap(w_row))
+        self._w_row_label = QLabel()
+        param_layout.addRow(self._w_row_label, _wrap(w_row))
 
-        # 格式 + 无损
         f_row = QHBoxLayout()
         self.fmt_combo = QComboBox()
         self.fmt_combo.addItems(["webp", "png"])
         self.fmt_combo.setMaximumWidth(100)
-        self.lossless_cb = QCheckBox("无损（仅 WebP）")
+        self.lossless_cb = QCheckBox()
         f_row.addWidget(self.fmt_combo)
         f_row.addSpacing(20)
         f_row.addWidget(self.lossless_cb)
         f_row.addStretch()
-        param_layout.addRow("输出格式:", _wrap(f_row))
+        self._f_row_label = QLabel()
+        param_layout.addRow(self._f_row_label, _wrap(f_row))
 
-        root.addWidget(param_box)
+        root.addWidget(self._param_box)
 
         # ---- 按钮区 ----
         btn_row = QHBoxLayout()
-        self.analyze_btn = QPushButton("分析输入文件")
+        self.analyze_btn = QPushButton()
         self.analyze_btn.clicked.connect(self._analyze)
-        self.run_btn = QPushButton("开始压缩")
+        self.run_btn = QPushButton()
         self.run_btn.setStyleSheet("font-weight: bold;")
         self.run_btn.clicked.connect(self._start_compress)
+        self._lang_btn = QPushButton()
+        self._lang_btn.setFixedWidth(52)
+        self._lang_btn.clicked.connect(self._toggle_lang)
         btn_row.addWidget(self.analyze_btn)
         btn_row.addWidget(self.run_btn)
         btn_row.addStretch()
+        btn_row.addWidget(self._lang_btn)
         root.addLayout(btn_row)
 
         # ---- 进度 ----
@@ -377,13 +521,13 @@ class MainWindow(QMainWindow):
         self.progress.setMinimum(0)
         self.progress.setMaximum(100)
         root.addWidget(self.progress)
-        self.status_label = QLabel("就绪")
+        self.status_label = QLabel()
         self.status_label.setStyleSheet("color: gray;")
         root.addWidget(self.status_label)
 
         # ---- 日志 ----
-        log_box = QGroupBox("日志")
-        log_layout = QVBoxLayout(log_box)
+        self._log_box = QGroupBox()
+        log_layout = QVBoxLayout(self._log_box)
         self.log_text = QTextEdit()
         self.log_text.setReadOnly(True)
         mono = QFont("Menlo" if sys.platform == "darwin" else "Consolas")
@@ -391,16 +535,62 @@ class MainWindow(QMainWindow):
         mono.setPointSize(11)
         self.log_text.setFont(mono)
         log_layout.addWidget(self.log_text)
-        root.addWidget(log_box, 1)
+        root.addWidget(self._log_box, 1)
 
-        # 默认选 balanced
         self.preset_radios["balanced"].setChecked(True)
+        self._retranslate()
+
+    # ---- 语言切换 ----
+
+    def _toggle_lang(self):
+        self._lang = "en" if self._lang == "zh" else "zh"
+        _save_lang(self._lang)
+        self._retranslate()
+
+    def _retranslate(self):
+        s = STRINGS[self._lang]
+        self.setWindowTitle(s["window_title"])
+        self._lang_btn.setText(s["lang_btn"])
+
+        self._file_box.setTitle(s["file_group"])
+        self._in_label.setText(s["input_label"])
+        self._out_label.setText(s["output_label"])
+        self._in_btn.setText(s["browse"])
+        self._out_btn.setText(s["browse"])
+
+        self._preset_box.setTitle(s["preset_group"])
+        for val, label, desc in s["presets"]:
+            rb, desc_lbl = self._preset_radio_labels[val]
+            rb.setText(label)
+            desc_lbl.setText(desc)
+
+        self._param_box.setTitle(s["param_group"])
+        self._q_row_label.setText(s["quality_label"])
+        self._s_row_label.setText(s["stride_label"])
+        self._s_note.setText(s["stride_note"])
+        self._w_row_label.setText(s["width_label"])
+        self._w_note.setText(s["width_note"])
+        self.width_edit.setPlaceholderText(s["width_placeholder"])
+        self._f_row_label.setText(s["format_label"])
+        self.lossless_cb.setText(s["lossless_cb"])
+
+        self.analyze_btn.setText(s["analyze_btn"])
+        self.run_btn.setText(s["run_btn"])
+        self._log_box.setTitle(s["log_group"])
+
+        if self.status_label.text() in (
+            STRINGS["zh"]["status_ready"], STRINGS["en"]["status_ready"]
+        ):
+            self.status_label.setText(s["status_ready"])
+
+    def _s(self, key: str) -> str:
+        return STRINGS[self._lang][key]
 
     # ---- 操作 ----
 
     def _pick_input(self):
         path, _ = QFileDialog.getOpenFileName(
-            self, "选择 Lottie JSON", "", "Lottie JSON (*.json);;All (*.*)"
+            self, self._s("pick_input_title"), "", "Lottie JSON (*.json);;All (*.*)"
         )
         if path:
             self.in_edit.setText(path)
@@ -410,7 +600,7 @@ class MainWindow(QMainWindow):
 
     def _pick_output(self):
         path, _ = QFileDialog.getSaveFileName(
-            self, "保存为", "", "Lottie JSON (*.json)"
+            self, self._s("pick_output_title"), "", "Lottie JSON (*.json)"
         )
         if path:
             if not path.endswith(".json"):
@@ -441,44 +631,46 @@ class MainWindow(QMainWindow):
     def _analyze(self):
         path = self.in_edit.text().strip()
         if not path or not os.path.exists(path):
-            QMessageBox.warning(self, "错误", "请选择有效的输入文件")
+            QMessageBox.warning(self, self._s("dlg_error"), self._s("err_no_input"))
             return
+        s = STRINGS[self._lang]
         try:
             self.log_text.clear()
             info = analyze_file(path)
-            self._log("=== 文件信息 ===")
-            self._log(f"文件大小: {info['file_size'] / 1024 / 1024:.2f} MB")
-            self._log(f"Lottie 版本: {info['version']}")
-            self._log(f"画布: {info['w']} × {info['h']} @ {info['fr']}fps")
-            self._log(f"动画时长: {info['op']} 帧 (~{info['op']/max(info['fr'],1):.1f}秒)")
-            self._log(f"内嵌图片帧: {info['image_count']}")
+            self._log(s["log_file_info"])
+            self._log(f"{s['log_file_size']}: {info['file_size'] / 1024 / 1024:.2f} MB")
+            self._log(f"{s['log_version']}: {info['version']}")
+            self._log(f"{s['log_canvas']}: {info['w']} × {info['h']} @ {info['fr']}fps")
+            dur = f"{info['op']} {s['log_frames_unit']} (~{info['op']/max(info['fr'],1):.1f}{s['log_sec']})"
+            self._log(f"{s['log_duration']}: {dur}")
+            self._log(f"{s['log_img_frames']}: {info['image_count']}")
             if info['image_count'] > 0:
-                self._log(f"帧格式: {info.get('frame_format', '?')}")
-                self._log(f"帧尺寸: {info.get('frame_w', 0)} × {info.get('frame_h', 0)} ({info.get('frame_mode', '?')})")
-                self._log(f"平均每帧 base64 长度: {info.get('avg_frame_b64', 0) // 1024} KB")
+                self._log(f"{s['log_frame_fmt']}: {info.get('frame_format', '?')}")
+                self._log(f"{s['log_frame_size']}: {info.get('frame_w', 0)} × {info.get('frame_h', 0)} ({info.get('frame_mode', '?')})")
+                self._log(f"{s['log_avg_frame']}: {info.get('avg_frame_b64', 0) // 1024} KB")
                 self._log("")
-                self._log("✓ 此文件适合用本工具压缩")
+                self._log(s["log_suitable"])
             else:
                 self._log("")
-                self._log("⚠ 此文件没有内嵌图片帧（可能是矢量 Lottie），本工具无效")
+                self._log(s["log_no_frames"])
         except Exception as e:
-            QMessageBox.critical(self, "分析失败", str(e))
+            QMessageBox.critical(self, s["dlg_analysis_failed"], str(e))
 
     def _start_compress(self):
         if self.worker and self.worker.isRunning():
-            QMessageBox.information(self, "正在处理", "请等待当前任务完成")
+            QMessageBox.information(self, self._s("dlg_processing"), self._s("dlg_processing_msg"))
             return
 
         in_path = self.in_edit.text().strip()
         out_path = self.out_edit.text().strip()
         if not in_path or not os.path.exists(in_path):
-            QMessageBox.warning(self, "错误", "请选择有效的输入文件")
+            QMessageBox.warning(self, self._s("dlg_error"), self._s("err_no_input"))
             return
         if not out_path:
-            QMessageBox.warning(self, "错误", "请指定输出文件")
+            QMessageBox.warning(self, self._s("dlg_error"), self._s("err_no_output"))
             return
         if os.path.abspath(in_path) == os.path.abspath(out_path):
-            QMessageBox.warning(self, "错误", "输出路径不能和输入相同")
+            QMessageBox.warning(self, self._s("dlg_error"), self._s("err_same_path"))
             return
 
         target_w = None
@@ -489,7 +681,7 @@ class MainWindow(QMainWindow):
                 if target_w <= 0:
                     raise ValueError()
             except ValueError:
-                QMessageBox.warning(self, "错误", "目标宽度必须是正整数或留空")
+                QMessageBox.warning(self, self._s("dlg_error"), self._s("err_bad_width"))
                 return
 
         params = dict(
@@ -507,7 +699,7 @@ class MainWindow(QMainWindow):
         self.run_btn.setEnabled(False)
         self.analyze_btn.setEnabled(False)
         self.progress.setValue(0)
-        self.status_label.setText("正在处理...")
+        self.status_label.setText(self._s("status_processing"))
         self.status_label.setStyleSheet("color: gray;")
 
         self.worker = CompressWorker(params)
@@ -525,10 +717,10 @@ class MainWindow(QMainWindow):
     def _on_done(self, out_path):
         self.run_btn.setEnabled(True)
         self.analyze_btn.setEnabled(True)
-        self.status_label.setText("✓ 完成")
+        self.status_label.setText(self._s("status_done"))
         self.status_label.setStyleSheet("color: green;")
         reply = QMessageBox.question(
-            self, "完成", "压缩完成！是否打开输出文件夹？",
+            self, self._s("dlg_done"), self._s("dlg_done_msg"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
         if reply == QMessageBox.StandardButton.Yes:
@@ -537,9 +729,9 @@ class MainWindow(QMainWindow):
     def _on_error(self, msg):
         self.run_btn.setEnabled(True)
         self.analyze_btn.setEnabled(True)
-        self.status_label.setText("✗ 失败")
+        self.status_label.setText(self._s("status_failed"))
         self.status_label.setStyleSheet("color: red;")
-        QMessageBox.critical(self, "压缩失败", msg)
+        QMessageBox.critical(self, self._s("dlg_compress_failed"), msg)
 
     @staticmethod
     def _open_folder(path):
@@ -557,7 +749,6 @@ class MainWindow(QMainWindow):
 
 
 def _wrap(layout):
-    """把一个 layout 包成 QWidget 用于 QFormLayout.addRow"""
     w = QWidget()
     w.setLayout(layout)
     layout.setContentsMargins(0, 0, 0, 0)
@@ -569,7 +760,7 @@ def main():
         from PIL import Image  # noqa
     except ImportError:
         app = QApplication(sys.argv)
-        QMessageBox.critical(None, "缺少依赖", "需要安装 Pillow:\n\npip install pillow")
+        QMessageBox.critical(None, "Missing dependency", "Please install Pillow:\n\npip install pillow")
         return
 
     app = QApplication(sys.argv)
