@@ -277,6 +277,23 @@ footer a { color: var(--muted); }
 .result-key { font-size: 12px; color: var(--muted); margin-top: 4px; }
 .result-arrow { font-size: 24px; color: var(--muted); }
 
+/* ---- Carbon Ads ---- */
+.carbon-wrap { margin: 32px auto; display: flex; justify-content: center; }
+#carbonads {
+  display: flex; max-width: 330px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 16px;
+  font-family: var(--font); font-size: 12px; line-height: 1.5;
+}
+#carbonads a { color: var(--muted); text-decoration: none; }
+#carbonads a:hover { color: var(--text); }
+.carbon-img { display: block; margin-bottom: 8px; border-radius: 4px; overflow: hidden; }
+.carbon-img img { display: block; max-width: 130px; }
+.carbon-text { flex: 1; padding-left: 12px; }
+.carbon-poweredby {
+  display: block; margin-top: 8px; font-size: 10px;
+  letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase;
+}
+
 /* ---- Preview page ---- */
 .preview-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 20px;

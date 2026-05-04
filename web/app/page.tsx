@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import lottie, { AnimationItem } from "lottie-web";
 import { useLang } from "../lib/LangContext";
+import { CarbonAd } from "../components/CarbonAd";
 import { compressLottie, analyzeJson } from "../lib/lottie-compress";
 import type { CompressOptions, Progress } from "../lib/lottie-compress";
 
@@ -228,6 +229,9 @@ export default function Home() {
               <div className="drop-hint">{t.hint}</div>
             </div>
           )}
+
+          {/* Ad — shown while idle */}
+          {state === "idle" && <CarbonAd />}
 
           {/* Error */}
           {state === "error" && (

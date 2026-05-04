@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useLang } from "../../lib/LangContext";
+import { CarbonAd } from "../../components/CarbonAd";
 import LottiePreview from "./LottiePlayer";
 
 export default function PreviewPage() {
@@ -50,6 +51,7 @@ export default function PreviewPage() {
           </div>
 
           <LottiePreview lang={lang} />
+          <CarbonAd />
         </div>
       </main>
 
