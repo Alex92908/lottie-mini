@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useLang } from "../../lib/LangContext";
 import { CarbonAd } from "../../components/CarbonAd";
+import { GoogleAd } from "../../components/GoogleAd";
 import LottiePreview from "./LottiePlayer";
 
 export default function PreviewPage() {
@@ -51,7 +52,10 @@ export default function PreviewPage() {
           </div>
 
           <LottiePreview lang={lang} />
-          <CarbonAd />
+          <div className="ad-row">
+            <CarbonAd />
+            <GoogleAd />
+          </div>
         </div>
       </main>
 

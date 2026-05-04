@@ -4,6 +4,7 @@ import Link from "next/link";
 import lottie, { AnimationItem } from "lottie-web";
 import { useLang } from "../lib/LangContext";
 import { CarbonAd } from "../components/CarbonAd";
+import { GoogleAd } from "../components/GoogleAd";
 import { compressLottie, analyzeJson } from "../lib/lottie-compress";
 import type { CompressOptions, Progress } from "../lib/lottie-compress";
 
@@ -230,8 +231,13 @@ export default function Home() {
             </div>
           )}
 
-          {/* Ad — shown while idle */}
-          {state === "idle" && <CarbonAd />}
+          {/* Ads — shown while idle */}
+          {state === "idle" && (
+            <div className="ad-row">
+              <CarbonAd />
+              <GoogleAd />
+            </div>
+          )}
 
           {/* Error */}
           {state === "error" && (

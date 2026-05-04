@@ -278,7 +278,11 @@ footer a { color: var(--muted); }
 .result-arrow { font-size: 24px; color: var(--muted); }
 
 /* ---- Carbon Ads ---- */
-.carbon-wrap { margin: 32px auto; display: flex; justify-content: center; }
+/* ---- Ad row ---- */
+.ad-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 32px auto; }
+.google-ad-wrap { width: 100%; max-width: 728px; }
+
+.carbon-wrap { display: flex; justify-content: center; }
 #carbonads {
   display: flex; max-width: 330px; background: var(--surface);
   border: 1px solid var(--border); border-radius: 8px; padding: 16px;
