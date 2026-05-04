@@ -6,6 +6,8 @@
 
 ---
 
+![lottie-mini GUI](docs/screenshot.png)
+
 ## What it does
 
 Lottie files that embed PNG frame sequences can balloon to 30–100 MB. `lottie-mini` re-encodes every frame to WebP (with optional frame-skipping and resize), then rewrites the timeline — shrinking those files to under 1 MB while remaining visually indistinguishable.
