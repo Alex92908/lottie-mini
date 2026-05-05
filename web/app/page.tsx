@@ -197,7 +197,7 @@ export default function Home() {
     <>
       <nav>
         <div className="nav-inner">
-          <span className="nav-logo">lottie<span>-mini</span></span>
+          <img src="/logo-text.svg" alt="lottie-mini" height={36} style={{ display: "block" }} />
           <div className="nav-links">
             <Link href="/preview">{t.preview}</Link>
             <a href={GITHUB} target="_blank" rel="noopener noreferrer">{t.github}</a>

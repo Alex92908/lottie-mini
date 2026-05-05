@@ -27,9 +27,7 @@ export default function PreviewPage() {
     <>
       <nav>
         <div className="nav-inner">
-          <span className="nav-logo">
-            lottie<span>-mini</span>
-          </span>
+          <img src="/logo-text.svg" alt="lottie-mini" height={36} style={{ display: "block" }} />
           <div className="nav-links">
             <Link href="/">{t.back}</Link>
             <button className="lang-toggle" onClick={toggle}>
