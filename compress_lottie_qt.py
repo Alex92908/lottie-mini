@@ -15,6 +15,7 @@ import json
 import os
 import sys
 import time
+import zipfile
 
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QFont
@@ -172,6 +173,19 @@ def _save_lang(lang: str):
 
 # ---------- 核心压缩逻辑 ----------
 
+def load_lottie_json(path: str) -> dict:
+    """Load a Lottie animation from .json or .lottie (dotLottie ZIP) file."""
+    if path.endswith(".lottie"):
+        with zipfile.ZipFile(path) as zf:
+            anim_names = [n for n in zf.namelist() if n.startswith("animations/") and n.endswith(".json")]
+            if not anim_names:
+                raise ValueError("No animation JSON found inside .lottie file")
+            with zf.open(anim_names[0]) as f:
+                return json.load(f)
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
 def is_image_asset(asset: dict) -> bool:
     p = asset.get("p", "")
     return isinstance(p, str) and p.startswith("data:")
@@ -179,8 +193,7 @@ def is_image_asset(asset: dict) -> bool:
 
 def analyze_file(src_path: str) -> dict:
     info = {"file_size": os.path.getsize(src_path)}
-    with open(src_path) as f:
-        d = json.load(f)
+    d = load_lottie_json(src_path)
     info["version"] = d.get("v", "?")
     info["w"] = d.get("w", 0)
     info["h"] = d.get("h", 0)
@@ -226,8 +239,7 @@ def compress(
 
     log(f"loading {os.path.basename(src_path)}...")
     progress(0, "loading")
-    with open(src_path) as f:
-        src = json.load(f)
+    src = load_lottie_json(src_path)
     orig_size = os.path.getsize(src_path)
     log(f"original size: {orig_size / 1024 / 1024:.2f} MB")
 
@@ -590,7 +602,7 @@ class MainWindow(QMainWindow):
 
     def _pick_input(self):
         path, _ = QFileDialog.getOpenFileName(
-            self, self._s("pick_input_title"), "", "Lottie JSON (*.json);;All (*.*)"
+            self, self._s("pick_input_title"), "", "Lottie files (*.json *.lottie);;All (*.*)"
         )
         if path:
             self.in_edit.setText(path)
