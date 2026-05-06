@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useCallback, useEffect } from "react";
 import lottie, { AnimationItem } from "lottie-web";
+import { parseDotLottie, isDotLottie } from "../../lib/dotlottie";
 
 interface FileState {
   name: string;
@@ -61,26 +62,22 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
 
   const load = useCallback((file: File) => {
     setError("");
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const json = JSON.parse(e.target?.result as string);
-        // Set info first → triggers re-render → div appears → useEffect fires
-        setInfo({
-          name: file.name,
-          sizeMB: formatMB(file.size),
-          ...parseInfo(json as Record<string, unknown>),
-        });
-        setPendingJson(json);
-      } catch {
-        setError(
-          lang === "en"
-            ? "Invalid JSON — is this a Lottie file?"
-            : "JSON 解析失败，请确认是 Lottie 文件"
-        );
-      }
+    const finish = (json: Record<string, unknown>) => {
+      setInfo({ name: file.name, sizeMB: formatMB(file.size), ...parseInfo(json) });
+      setPendingJson(json);
     };
-    reader.readAsText(file);
+    const fail = () => setError(
+      lang === "en" ? "Invalid file — expected Lottie JSON or .lottie" : "文件解析失败，请确认是 Lottie JSON 或 .lottie 文件"
+    );
+    if (isDotLottie(file)) {
+      file.arrayBuffer().then((buf) => parseDotLottie(buf).then(finish).catch(fail)).catch(fail);
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try { finish(JSON.parse(e.target?.result as string)); } catch { fail(); }
+      };
+      reader.readAsText(file);
+    }
   }, [lang]);
 
   const onDrop = useCallback(
@@ -116,8 +113,8 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
 
   const ph =
     lang === "en"
-      ? { drop: "Drop Lottie JSON here", or: "or click to browse", hint: "No size limit · 100% local" }
-      : { drop: "拖入 Lottie JSON", or: "或点击选择文件", hint: "无大小限制 · 完全本地处理" };
+      ? { drop: "Drop Lottie JSON or .lottie here", or: "or click to browse", hint: "No size limit · JSON & dotLottie · 100% local" }
+      : { drop: "拖入 Lottie JSON 或 .lottie 文件", or: "或点击选择文件", hint: "无大小限制 · 支持 JSON 和 dotLottie · 完全本地" };
 
   return (
     <div className="player-card">
@@ -134,7 +131,7 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
         <input
           id={`file-${label}`}
           type="file"
-          accept=".json"
+          accept=".json,.lottie"
           style={{ display: "none" }}
           onChange={onFileChange}
         />
@@ -172,7 +169,7 @@ function Player({ label, lang }: { label: string; lang: "en" | "zh" }) {
             </button>
             <label className="ctrl-btn" style={{ cursor: "pointer" }}>
               📂 {lang === "en" ? "Load another" : "重新加载"}
-              <input type="file" accept=".json" style={{ display: "none" }} onChange={onFileChange} />
+              <input type="file" accept=".json,.lottie" style={{ display: "none" }} onChange={onFileChange} />
             </label>
           </div>
         </div>
