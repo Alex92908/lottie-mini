@@ -2,12 +2,12 @@
 
 **Compress image-sequence Lottie files by 50–100×, with a desktop GUI.**
 
-[![Landing page](https://img.shields.io/badge/website-lottie--mini.vercel.app-7c6dfa?style=flat-square&logo=vercel)](https://lottie-mini.vercel.app)
-[![Live preview tool](https://img.shields.io/badge/preview_tool-lottie--mini.vercel.app%2Fpreview-4ade80?style=flat-square&logo=vercel)](https://lottie-mini.vercel.app/preview)
+[![Landing page](https://img.shields.io/badge/website-lottie--mini.com-7c6dfa?style=flat-square&logo=vercel)](https://www.lottie-mini.com)
+[![Live preview tool](https://img.shields.io/badge/preview_tool-lottie--mini.com%2Fpreview-4ade80?style=flat-square&logo=vercel)](https://www.lottie-mini.com/preview)
 [![中文文档](https://img.shields.io/badge/文档-中文版-orange?style=flat-square)](README_zh.md)
 
-> **🌐 Landing page:** https://lottie-mini.vercel.app
-> **🎬 Lottie Preview Tool:** https://lottie-mini.vercel.app/preview
+> **🌐 Landing page:** https://www.lottie-mini.com
+> **🎬 Lottie Preview Tool:** https://www.lottie-mini.com/preview
 
 ---
 
@@ -89,7 +89,7 @@ Runs 100% in the browser — no uploads, no size limit.
 
 ![Lottie Preview Tool](docs/preview_en.png)
 
-→ https://lottie-mini.vercel.app/preview
+→ https://www.lottie-mini.com/preview
 
 ---
 

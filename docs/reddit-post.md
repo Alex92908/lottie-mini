@@ -1,6 +1,6 @@
 # I compressed a 70 MB Lottie file down to 800 KB — here's how it works
 
-> **Try it:** https://lottie-mini.vercel.app  
+> **Try it:** https://www.lottie-mini.com  
 > **GitHub:** https://github.com/Alex92908/lottie-mini  
 > Supports Lottie JSON and dotLottie (.lottie) · No size limit · No upload · 100% local
 
@@ -102,7 +102,7 @@ def load_lottie_json(path):
 
 I packaged all of this into two things:
 
-**🌐 Browser tool (lottie-mini.vercel.app)**
+**🌐 Browser tool (lottie-mini.com)**
 - Drag and drop Lottie JSON or .lottie files
 - **No size limit** — LottieFiles' official preview caps at 20 MB, this one doesn't
 - Side-by-side before/after animation preview after compression

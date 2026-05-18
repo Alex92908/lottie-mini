@@ -1,6 +1,6 @@
 # 我把 70MB 的 Lottie 压到 800KB——一个纯浏览器端压缩工具的实现原理
 
-> 在线体验：https://lottie-mini.vercel.app  
+> 在线体验：https://www.lottie-mini.com  
 > 开源地址：https://github.com/Alex92908/lottie-mini  
 > 支持 Lottie JSON 和 dotLottie (.lottie)，无大小限制，不上传，100% 本地运行
 
@@ -197,7 +197,7 @@ async function parseDotLottie(buf: ArrayBuffer) {
 
 上面这些逻辑我打包成了两个工具：
 
-**🌐 浏览器在线版（lottie-mini.vercel.app）**
+**🌐 浏览器在线版（lottie-mini.com）**
 - 拖入文件直接压缩，支持 Lottie JSON 和 dotLottie
 - **无大小限制**（LottieFiles 官方预览限制 20MB，这个没有）
 - 压缩完可以左右对比预览原始和压缩后的动画效果
@@ -230,5 +230,5 @@ async function parseDotLottie(buf: ArrayBuffer) {
 
 ---
 
-欢迎试用：https://lottie-mini.vercel.app  
+欢迎试用：https://www.lottie-mini.com  
 觉得有用的话点个 GitHub Star ⭐：https://github.com/Alex92908/lottie-mini
