@@ -1,7 +1,23 @@
 # lottie-mini 推广清单
 
-域名:https://www.lottie-mini.com
+**两个免费工具一起推:**
+- 🗜️ 压缩:https://www.lottie-mini.com — 70MB → 1MB 以内
+- 🎬 预览:https://www.lottie-mini.com/preview — 免登录、无大小限制、可左右并排对比
+
 代码:https://github.com/Alex92908/lottie-mini
+
+## 双工具叙事策略
+
+不要每篇都只讲压缩,**Preview 是个独立的卖点,可以单独打设计师圈层**:
+
+- **开发者向平台**(掘金、HN、Reddit、Twitter):主打压缩,Preview 作为配套工具提一下
+- **设计师向平台**(小红书、即刻部分圈子):压缩 + Preview 同等推,或者干脆 Preview 单推
+- **二次曝光**:首发讲压缩,3-7 天后单独再发一篇 Preview(每个平台都有 Preview 单推版本)
+
+Preview 的差异化卖点(竞品对比):
+- LottieFiles 官方预览器要登录,且有上传大小限制
+- 大部分在线 Lottie 查看器都要传到服务器
+- Preview 支持**左右并排对比两个文件** —— 没见过别家有
 
 ## 推荐发布顺序与节奏
 

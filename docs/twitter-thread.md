@@ -39,13 +39,12 @@ lottie-mini does 3 things:
 All in your browser. Nothing uploaded. No size limit.
 
 **Tweet 4**
-There's also a side-by-side preview tool to verify the animation didn't break before downloading:
+Companion tool: a side-by-side Lottie preview at /preview
 
+Drop any two .json or .lottie files, watch them play side by side. No login, no size limit.
+
+Useful for compression QA, but also just a no-friction online Lottie viewer:
 https://www.lottie-mini.com/preview
-
-Open source: https://github.com/Alex92908/lottie-mini
-
-If your animation has Bodymovin expressions or pixel-perfect requirements, the preview saves you.
 
 **Tweet 5 (CTA)**
 Built it because I needed it. Free, no signup, no upload, no size cap.
@@ -108,3 +107,19 @@ https://www.lottie-mini.com
 
 ## Hashtags to consider (use sparingly)
 #frontend #webdev #lottie #animation #devtools #buildinpublic
+
+---
+
+## Bonus: standalone Preview-tool tweet (post a few days after the main thread)
+
+Most online Lottie previewers cap uploads at 5-10 MB and require login.
+
+Built a free one that doesn't:
+
+- .json + .lottie supported
+- No size limit
+- No signup
+- Side-by-side: drop two files to compare versions
+- Runs 100% in your browser
+
+https://www.lottie-mini.com/preview

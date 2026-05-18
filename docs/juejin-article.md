@@ -197,13 +197,23 @@ async function parseDotLottie(buf: ArrayBuffer) {
 
 上面这些逻辑我打包成了两个工具：
 
-**🌐 浏览器在线版（lottie-mini.com）**
+**🗜️ 压缩工具（https://www.lottie-mini.com）**
 - 拖入文件直接压缩，支持 Lottie JSON 和 dotLottie
-- **无大小限制**（LottieFiles 官方预览限制 20MB，这个没有）
-- 压缩完可以左右对比预览原始和压缩后的动画效果
+- **无大小限制**（LottieFiles 官方限制 20MB，这个没有）
 - 不上传文件，完全本地运行
 
-**🖥️ 桌面 GUI 版（Python + PyQt6）**
+**🎬 预览工具（https://www.lottie-mini.com/preview）**
+
+顺便提一下:做完压缩后我发现"在线本地预览 Lottie"本身也是个独立刚需——官方预览器要登录、限大小,本机播放又得起 demo 项目。所以 Preview 单独做成了一个页面:
+
+- 拖入 `.json` 或 `.lottie` 即播,免登录、无大小上限
+- **可以同时拖两个文件做左右并排对比**(改一版前后看差异、压缩前后做 QA 都很方便)
+- 显示帧率/时长/资源大小
+- 同样 100% 本地
+
+即使你不需要压缩,这个 Preview 工具也可以单独当一个免上传、免登录的在线 Lottie 查看器收藏。
+
+**🖥️ 桌面 GUI 版(Python + PyQt6)**
 - 适合批量处理或对隐私要求更高的场景
 - 同样支持 .json 和 .lottie 格式
 

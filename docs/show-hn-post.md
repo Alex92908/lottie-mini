@@ -32,6 +32,8 @@ What it does:
 - Optionally drops frames at a target framerate and rewrites the animation timeline keyframes so playback stays in sync
 - Supports both classic .json and the newer .lottie (zip container) format
 
+There's a companion preview tool at /preview that loads any Lottie file (or two, side-by-side) for visual inspection. It started as a QA aid for the compressor but turned out to be the most no-friction online Lottie viewer I know of — most others either gate behind login or cap uploads at 5-10MB.
+
 Everything runs in a Web Worker. Nothing is uploaded — no size limit, no rate limit, no account.
 
 Typical results: 70MB → ~800KB at quality 80 with 30fps target (50–100× depending on content). There's a side-by-side preview at /preview so you can compare original vs compressed playback before downloading.

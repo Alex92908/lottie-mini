@@ -102,11 +102,21 @@ def load_lottie_json(path):
 
 I packaged all of this into two things:
 
-**🌐 Browser tool (lottie-mini.com)**
+**🗜️ Compressor (https://www.lottie-mini.com)**
 - Drag and drop Lottie JSON or .lottie files
-- **No size limit** — LottieFiles' official preview caps at 20 MB, this one doesn't
-- Side-by-side before/after animation preview after compression
-- Nothing is uploaded — all processing happens locally in your browser
+- **No size limit** — LottieFiles' official tooling caps at 20 MB, this doesn't
+- Nothing uploaded; everything runs locally in your browser
+
+**🎬 Preview tool (https://www.lottie-mini.com/preview)**
+
+While building the compressor I realized "preview a Lottie file online" is its own under-served problem — most online viewers require a login or cap uploads at 5-10 MB. So I broke Preview out into its own page:
+
+- Drop any `.json` or `.lottie` — no signup, no size limit
+- **Side-by-side mode:** drop two files to compare versions (great for compression QA, or for diffing two animation revisions)
+- Shows fps, duration, embedded asset size
+- 100% local
+
+Use it standalone as a no-friction Lottie viewer, even if you never compress anything.
 
 **🖥️ Desktop GUI (Python + PyQt6)**
 - For batch processing or when you want to keep files completely off the network
