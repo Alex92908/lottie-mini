@@ -1,10 +1,14 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang } from "../../lib/LangContext";
-import { parseDotLottie, isDotLottie } from "../../lib/dotlottie";
+import { parseDotLottie, repackDotLottie, isDotLottie } from "../../lib/dotlottie";
 import { inspectLottie, fmtBytes } from "../../lib/inspect";
-import type { InspectReport } from "../../lib/inspect";
+import { validateLottie } from "../../lib/lottie-validate";
+import {
+  commit, undo as undoOp, redo as redoOp, emptyHistory,
+} from "../../lib/json-patch";
+import type { JsonValue, Patch, History } from "../../lib/json-patch";
 import JsonTree from "./JsonTree";
 import { CarbonAd } from "../../components/CarbonAd";
 import { GoogleAd } from "../../components/GoogleAd";
@@ -13,8 +17,8 @@ type State = "idle" | "loaded" | "error";
 
 const T = {
   en: {
-    title: "Lottie Inspector",
-    sub: "Drop a .json or .lottie file to see exactly what's inside — structural overview, the largest embedded assets, and a searchable, collapsible tree of every key.",
+    title: "Lottie Inspector & Editor",
+    sub: "Drop a .json or .lottie to see exactly what's inside — file-size breakdown, top embedded assets, and a fully editable JSON tree with undo/redo.",
     drop: "Drop Lottie JSON or .lottie here",
     or: "or click to browse",
     hint: "Any size · 100% local · no upload",
@@ -39,21 +43,27 @@ const T = {
     metaEmbedded: "Embedded assets",
 
     topTitle: "Largest embedded assets",
-    topSub: "These are the items inflating the file. Compress them and the size collapses.",
+    topSub: "These are inflating the file. Compress them and the size collapses.",
     colId: "Asset ID",
     colType: "Type",
     colJson: "Size in JSON",
     colDecoded: "Decoded",
     colPct: "% of file",
-    topEmpty: "No embedded raster assets — this is a pure vector Lottie. Nothing to compress.",
+    topEmpty: "No embedded raster — this is a pure vector Lottie.",
     topCta: "Try the Compressor →",
 
-    treeTitle: "Full JSON tree",
-    treeSub: "Search any key or value; matching branches auto-expand.",
+    treeTitle: "JSON editor",
+    treeSub: "Click any primitive value to edit. ＋ to add a child, ✕ to delete. Type-locked to prevent breakage.",
+    undo: "↶ Undo", redo: "↷ Redo", revert: "↻ Revert", live: "Live",
+    dlJson: "↓ Download JSON",
+    dlDotLottie: "↓ Download .lottie",
+    edited: "edited",
+    issues: "Validation",
+    issuesNone: "No issues found.",
   },
   zh: {
-    title: "Lottie 文件分析",
-    sub: "拖入 .json 或 .lottie 文件,一眼看清结构:体积构成、最大的内嵌资源、可搜索可折叠的完整 JSON 树。",
+    title: "Lottie 分析与编辑器",
+    sub: "拖入 .json 或 .lottie,看清结构、定位大资源,并直接在浏览器里编辑 JSON,带撤销/重做,完全本地。",
     drop: "拖入 Lottie JSON 或 .lottie",
     or: "或点击选择文件",
     hint: "任意大小 · 完全本地 · 不上传",
@@ -84,11 +94,17 @@ const T = {
     colJson: "JSON 占用",
     colDecoded: "解码后",
     colPct: "占整体",
-    topEmpty: "没有内嵌位图——这是纯矢量 Lottie,无需压缩。",
+    topEmpty: "没有内嵌位图——这是纯矢量 Lottie。",
     topCta: "去压缩工具 →",
 
-    treeTitle: "完整 JSON 树",
-    treeSub: "支持搜索 key 或 value,命中的分支会自动展开。",
+    treeTitle: "JSON 编辑器",
+    treeSub: "点击任意基础值即可编辑;＋ 添加子节点,✕ 删除。类型锁定,避免破坏文件。",
+    undo: "↶ 撤销", redo: "↷ 重做", revert: "↻ 还原原始", live: "实时",
+    dlJson: "↓ 下载 JSON",
+    dlDotLottie: "↓ 下载 .lottie",
+    edited: "已修改",
+    issues: "校验",
+    issuesNone: "未发现问题。",
   },
 } as const;
 
@@ -98,27 +114,34 @@ export default function InspectPage() {
 
   const [state, setState] = useState<State>("idle");
   const [dragging, setDragging] = useState(false);
-  const [json, setJson] = useState<Record<string, unknown> | null>(null);
-  const [report, setReport] = useState<InspectReport | null>(null);
+
+  // Source state — the file we loaded
+  const [originalJson, setOriginalJson] = useState<Record<string, unknown> | null>(null);
+  const [originalBuf, setOriginalBuf] = useState<ArrayBuffer | null>(null); // only set for .lottie
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
+
+  // Editable state — the working copy + undo stack
+  const [json, setJson] = useState<JsonValue | null>(null);
+  const [history, setHistory] = useState<History>(emptyHistory());
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const loadFile = useCallback(async (file: File) => {
-    setError(""); setJson(null); setReport(null);
+    setError(""); setOriginalJson(null); setJson(null); setHistory(emptyHistory());
+    setOriginalBuf(null);
     try {
       let parsed: Record<string, unknown>;
       if (isDotLottie(file)) {
         const buf = await file.arrayBuffer();
         parsed = await parseDotLottie(buf);
+        setOriginalBuf(buf);
       } else {
         const text = await file.text();
         parsed = JSON.parse(text);
       }
-      const rep = inspectLottie(parsed, file.size);
-      setJson(parsed);
-      setReport(rep);
+      setOriginalJson(parsed);
+      setJson(parsed as JsonValue);
       setFileName(file.name);
       setState("loaded");
     } catch (e) {
@@ -134,9 +157,77 @@ export default function InspectPage() {
     if (f) loadFile(f);
   }, [loadFile]);
 
-  const reset = () => {
+  const resetAll = () => {
     setState("idle");
-    setJson(null); setReport(null); setFileName(""); setError("");
+    setOriginalJson(null); setJson(null); setHistory(emptyHistory());
+    setFileName(""); setOriginalBuf(null); setError("");
+  };
+
+  // ---- editing ----
+
+  const onPatch = useCallback((patch: Patch) => {
+    setJson((prev) => {
+      if (prev === null) return prev;
+      const result = commit(prev, patch, history);
+      setHistory(result.hist);
+      return result.root;
+    });
+  }, [history]);
+
+  const onUndo = useCallback(() => {
+    if (json === null) return;
+    const r = undoOp(json, history);
+    if (r) { setJson(r.root); setHistory(r.hist); }
+  }, [json, history]);
+
+  const onRedo = useCallback(() => {
+    if (json === null) return;
+    const r = redoOp(json, history);
+    if (r) { setJson(r.root); setHistory(r.hist); }
+  }, [json, history]);
+
+  const revertOriginal = () => {
+    if (!originalJson) return;
+    setJson(originalJson as JsonValue);
+    setHistory(emptyHistory());
+  };
+
+  // ---- live derived state ----
+
+  // Re-serialize on every edit to compute current size + report. For very
+  // large files this is OK because JSON.stringify is fast and the user
+  // typically pauses between edits.
+  const derived = useMemo(() => {
+    if (json === null) return null;
+    const serialized = JSON.stringify(json);
+    const report = inspectLottie(json as Record<string, unknown>, serialized.length);
+    const issues = validateLottie(json as Record<string, unknown>);
+    return { serialized, report, issues };
+  }, [json]);
+
+  const isEdited = history.past.length > 0;
+
+  // ---- downloads ----
+
+  const dlJson = () => {
+    if (!derived) return;
+    const blob = new Blob([derived.serialized], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName.replace(/\.lottie$/i, ".json").replace(/\.json$/i, "") + "_edited.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  const dlDotLottie = () => {
+    if (!originalBuf || json === null) return;
+    const packed = repackDotLottie(originalBuf, json as Record<string, unknown>);
+    const blob = new Blob([packed as BlobPart], { type: "application/zip" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName.replace(/\.lottie$/i, "") + "_edited.lottie";
+    a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   return (
@@ -161,7 +252,7 @@ export default function InspectPage() {
             <h1 style={{ fontSize: "clamp(28px,5vw,48px)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: 12 }}>
               {t.title}
             </h1>
-            <p style={{ color: "var(--muted)", fontSize: 15, maxWidth: 560, margin: "0 auto" }}>{t.sub}</p>
+            <p style={{ color: "var(--muted)", fontSize: 15, maxWidth: 600, margin: "0 auto" }}>{t.sub}</p>
           </div>
 
           {state === "idle" && (
@@ -173,9 +264,7 @@ export default function InspectPage() {
               onClick={() => inputRef.current?.click()}
             >
               <input
-                ref={inputRef}
-                type="file"
-                accept=".json,.lottie"
+                ref={inputRef} type="file" accept=".json,.lottie"
                 style={{ display: "none" }}
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) loadFile(f); }}
               />
@@ -189,55 +278,63 @@ export default function InspectPage() {
           {state === "error" && (
             <div className="compress-error">
               <strong>{t.errTitle}:</strong> {error}
-              <button className="ctrl-btn" style={{ marginLeft: 16 }} onClick={reset}>↩</button>
+              <button className="ctrl-btn" style={{ marginLeft: 16 }} onClick={resetAll}>↩</button>
             </div>
           )}
 
-          {state === "loaded" && report && json && (
+          {state === "loaded" && derived && json !== null && (
             <>
               {/* Overview */}
               <div className="compress-panel" style={{ marginBottom: 32 }}>
                 <div className="cpanel-section">
                   <div className="cpanel-title">
-                    {t.overviewLabel} · <span style={{ textTransform: "none", color: "var(--text)", fontWeight: 600 }}>{fileName}</span>
-                    <button className="ctrl-btn" style={{ float: "right", marginTop: -4 }} onClick={reset}>{t.reset}</button>
+                    {t.overviewLabel} ·{" "}
+                    <span style={{ textTransform: "none", color: "var(--text)", fontWeight: 600 }}>{fileName}</span>
+                    {isEdited && <span className="ins-edited-badge">{t.edited}</span>}
+                    <button className="ctrl-btn" style={{ float: "right", marginTop: -4 }} onClick={resetAll}>{t.reset}</button>
                   </div>
 
-                  {/* Breakdown bar */}
                   <div style={{ marginBottom: 24 }}>
                     <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 8 }}>
-                      {t.breakdown} · {fmtBytes(report.totalBytes)}
+                      {t.breakdown} · {fmtBytes(derived.report.totalBytes)} <span style={{ color: "var(--accent2)" }}>· {t.live}</span>
                     </div>
                     <div className="ins-stack">
-                      <div
-                        className="ins-stack-vec"
-                        style={{ width: `${100 - report.embeddedPct}%` }}
-                        title={`${t.breakdownVector}: ${fmtBytes(report.vectorBytes)}`}
-                      />
-                      <div
-                        className="ins-stack-raster"
-                        style={{ width: `${report.embeddedPct}%` }}
-                        title={`${t.breakdownEmbedded}: ${fmtBytes(report.embeddedBytes)}`}
-                      />
+                      <div className="ins-stack-vec" style={{ width: `${100 - derived.report.embeddedPct}%` }}
+                        title={`${t.breakdownVector}: ${fmtBytes(derived.report.vectorBytes)}`} />
+                      <div className="ins-stack-raster" style={{ width: `${derived.report.embeddedPct}%` }}
+                        title={`${t.breakdownEmbedded}: ${fmtBytes(derived.report.embeddedBytes)}`} />
                     </div>
                     <div className="ins-legend">
-                      <span><i className="ins-dot ins-dot-vec" /> {t.breakdownVector} · {fmtBytes(report.vectorBytes)} ({(100 - report.embeddedPct).toFixed(1)}%)</span>
-                      <span><i className="ins-dot ins-dot-raster" /> {t.breakdownEmbedded} · {fmtBytes(report.embeddedBytes)} ({report.embeddedPct.toFixed(1)}%)</span>
+                      <span><i className="ins-dot ins-dot-vec" /> {t.breakdownVector} · {fmtBytes(derived.report.vectorBytes)} ({(100 - derived.report.embeddedPct).toFixed(1)}%)</span>
+                      <span><i className="ins-dot ins-dot-raster" /> {t.breakdownEmbedded} · {fmtBytes(derived.report.embeddedBytes)} ({derived.report.embeddedPct.toFixed(1)}%)</span>
                     </div>
                   </div>
 
-                  {/* Meta grid */}
                   <div className="ins-meta-grid">
-                    <Metric label={t.metaVersion} value={report.version} />
-                    <Metric label={t.metaCanvas} value={`${report.width} × ${report.height}`} />
-                    <Metric label={t.metaFps} value={String(report.fps)} />
-                    <Metric label={t.metaDuration} value={`${report.durationFrames} ${t.metaFrames} · ${report.durationSec}${t.metaSec}`} />
-                    <Metric label={t.metaComps} value={String(report.compositionCount)} />
-                    <Metric label={t.metaLayers} value={String(report.layerCount)} />
-                    <Metric label={t.metaShapes} value={String(report.shapeCount)} />
-                    <Metric label={t.metaEmbedded} value={String(report.embeddedCount)} accent={report.embeddedCount > 0} />
+                    <Metric label={t.metaVersion} value={derived.report.version} />
+                    <Metric label={t.metaCanvas} value={`${derived.report.width} × ${derived.report.height}`} />
+                    <Metric label={t.metaFps} value={String(derived.report.fps)} />
+                    <Metric label={t.metaDuration} value={`${derived.report.durationFrames} ${t.metaFrames} · ${derived.report.durationSec}${t.metaSec}`} />
+                    <Metric label={t.metaComps} value={String(derived.report.compositionCount)} />
+                    <Metric label={t.metaLayers} value={String(derived.report.layerCount)} />
+                    <Metric label={t.metaShapes} value={String(derived.report.shapeCount)} />
+                    <Metric label={t.metaEmbedded} value={String(derived.report.embeddedCount)} accent={derived.report.embeddedCount > 0} />
                   </div>
                 </div>
+
+                {/* Validation */}
+                {derived.issues.length > 0 && (
+                  <div className="cpanel-section">
+                    <div className="cpanel-title">{t.issues}</div>
+                    <ul className="ins-issues">
+                      {derived.issues.map((iss, i) => (
+                        <li key={i} className={iss.severity === "error" ? "ins-issue-error" : "ins-issue-warn"}>
+                          <strong>{iss.severity === "error" ? "✗" : "⚠"}</strong> {iss.message}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               {/* Top assets */}
@@ -246,7 +343,7 @@ export default function InspectPage() {
                   <div className="cpanel-title">{t.topTitle}</div>
                   <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 16 }}>{t.topSub}</div>
 
-                  {report.topAssets.length === 0 ? (
+                  {derived.report.topAssets.length === 0 ? (
                     <div style={{ fontSize: 14, color: "var(--muted)", padding: "12px 0" }}>{t.topEmpty}</div>
                   ) : (
                     <>
@@ -262,8 +359,8 @@ export default function InspectPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {report.topAssets.slice(0, 10).map((a) => {
-                              const pct = report.totalBytes > 0 ? (a.jsonBytes / report.totalBytes) * 100 : 0;
+                            {derived.report.topAssets.slice(0, 10).map((a) => {
+                              const pct = derived.report.totalBytes > 0 ? (a.jsonBytes / derived.report.totalBytes) * 100 : 0;
                               return (
                                 <tr key={a.id}>
                                   <td><code>{a.id}</code></td>
@@ -271,9 +368,7 @@ export default function InspectPage() {
                                   <td style={{ textAlign: "right" }}>{fmtBytes(a.jsonBytes)}</td>
                                   <td style={{ textAlign: "right" }}>{fmtBytes(a.decodedBytes)}</td>
                                   <td style={{ textAlign: "right" }}>
-                                    <span className="ins-pct-bar" style={{ ["--pct" as string]: `${Math.min(100, pct)}%` }}>
-                                      {pct.toFixed(1)}%
-                                    </span>
+                                    <span className="ins-pct-bar">{pct.toFixed(1)}%</span>
                                   </td>
                                 </tr>
                               );
@@ -289,12 +384,25 @@ export default function InspectPage() {
                 </div>
               </div>
 
-              {/* JSON tree */}
+              {/* JSON editor */}
               <div className="compress-panel" style={{ marginBottom: 60 }}>
                 <div className="cpanel-section">
                   <div className="cpanel-title">{t.treeTitle}</div>
                   <div style={{ fontSize: 13, color: "var(--muted)", marginBottom: 16 }}>{t.treeSub}</div>
-                  <JsonTree data={json as Parameters<typeof JsonTree>[0]["data"]} lang={lang} />
+
+                  {/* Editor toolbar */}
+                  <div className="jt-edit-toolbar">
+                    <button className="ctrl-btn" onClick={onUndo} disabled={history.past.length === 0}>{t.undo}</button>
+                    <button className="ctrl-btn" onClick={onRedo} disabled={history.future.length === 0}>{t.redo}</button>
+                    <button className="ctrl-btn" onClick={revertOriginal} disabled={!isEdited}>{t.revert}</button>
+                    <span style={{ flex: 1 }} />
+                    <button className="ctrl-btn" onClick={dlJson}>{t.dlJson}</button>
+                    {originalBuf && (
+                      <button className="ctrl-btn" onClick={dlDotLottie}>{t.dlDotLottie}</button>
+                    )}
+                  </div>
+
+                  <JsonTree data={json} lang={lang} onPatch={onPatch} />
                 </div>
               </div>
             </>
