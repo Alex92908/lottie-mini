@@ -11,12 +11,14 @@ export default function PreviewPage() {
   const t = {
     en: {
       back: "← Back",
+      inspect: "Inspect",
       title: "Lottie Preview",
       sub: "Drop your before & after files side-by-side. Runs 100% in your browser — nothing is uploaded.",
       tip: "Tip: use the Balanced preset in lottie-mini, then compare the two files here.",
     },
     zh: {
       back: "← 返回",
+      inspect: "文件分析",
       title: "Lottie 在线预览",
       sub: "把压缩前后的文件并排拖入，直观对比效果。完全在浏览器本地运行，不上传任何数据。",
       tip: "提示：用 lottie-mini 的「均衡」预设压缩，然后把两个文件拖入左右对比。",
@@ -29,6 +31,7 @@ export default function PreviewPage() {
         <div className="nav-inner">
           <img src="/logo-text.svg" alt="lottie-mini" height={36} style={{ display: "block" }} />
           <div className="nav-links">
+            <Link href="/inspect">{t.inspect}</Link>
             <Link href="/">{t.back}</Link>
             <button className="lang-toggle" onClick={toggle}>
               {lang === "en" ? "中文" : "EN"}

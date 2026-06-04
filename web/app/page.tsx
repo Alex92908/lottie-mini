@@ -43,7 +43,7 @@ const T = {
     before: "Before", after: "After", ratio: "Ratio",
     download: "↓ Download", loadAnother: "Load another",
     origLabel: "Original", compLabel: "Compressed",
-    preview: "Preview", github: "GitHub ↗", langBtn: "中文",
+    preview: "Preview", inspect: "Inspect", github: "GitHub ↗", langBtn: "中文",
     errTitle: "Error",
   },
   zh: {
@@ -70,7 +70,7 @@ const T = {
     before: "压缩前", after: "压缩后", ratio: "压缩比",
     download: "↓ 下载", loadAnother: "重新加载",
     origLabel: "原始", compLabel: "压缩后",
-    preview: "预览对比", github: "GitHub ↗", langBtn: "EN",
+    preview: "预览对比", inspect: "文件分析", github: "GitHub ↗", langBtn: "EN",
     errTitle: "错误",
   },
 } as const;
@@ -200,6 +200,7 @@ export default function Home() {
           <img src="/logo-text.svg" alt="lottie-mini" height={36} style={{ display: "block" }} />
           <div className="nav-links">
             <Link href="/preview">{t.preview}</Link>
+            <Link href="/inspect">{t.inspect}</Link>
             <a href={GITHUB} target="_blank" rel="noopener noreferrer">{t.github}</a>
             <button className="lang-toggle" onClick={toggle}>{t.langBtn}</button>
           </div>
