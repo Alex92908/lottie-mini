@@ -1,9 +1,10 @@
 "use client";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLang } from "../../lib/LangContext";
 import { compressLottie, analyzeJson } from "../../lib/lottie-compress";
 import type { CompressOptions, Progress } from "../../lib/lottie-compress";
+import { consumeHandoff } from "../../lib/handoff";
 
 // ---- types ----
 type State = "idle" | "loaded" | "compressing" | "done" | "error";
@@ -138,28 +139,45 @@ export default function CompressPage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const loadParsed = useCallback((json: Record<string, unknown>, name: string, size: number) => {
+    setError(""); setResultBlob(null);
+    try {
+      const info = analyzeJson(json);
+      setRawJson(json);
+      setRawSize(size);
+      setFileInfo({
+        name,
+        sizeMB: fmt(size),
+        ...info,
+      });
+      setState("loaded");
+    } catch {
+      setError(lang === "en" ? "Failed to analyze JSON." : "JSON 分析失败。");
+      setState("error");
+    }
+  }, [lang]);
+
   const loadFile = useCallback((file: File) => {
     setError(""); setResultBlob(null); setRawJson(null); setFileInfo(null);
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const json = JSON.parse(e.target!.result as string);
-        const info = analyzeJson(json);
-        setRawJson(json);
-        setRawSize(file.size);
-        setFileInfo({
-          name: file.name,
-          sizeMB: fmt(file.size),
-          ...info,
-        });
-        setState("loaded");
+        loadParsed(json, file.name, file.size);
       } catch {
         setError(lang === "en" ? "Failed to parse JSON." : "JSON 解析失败。");
         setState("error");
       }
     };
     reader.readAsText(file);
-  }, [lang]);
+  }, [lang, loadParsed]);
+
+  // Pre-load from /inspect handoff on first mount.
+  useEffect(() => {
+    const h = consumeHandoff();
+    if (h) loadParsed(h.json, h.fileName, h.size ?? JSON.stringify(h.json).length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault(); setDragging(false);

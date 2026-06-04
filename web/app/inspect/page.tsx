@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLang } from "../../lib/LangContext";
 import { parseDotLottie, repackDotLottie, isDotLottie } from "../../lib/dotlottie";
 import { inspectLottie, fmtBytes } from "../../lib/inspect";
@@ -9,6 +10,7 @@ import {
   commit, undo as undoOp, redo as redoOp, emptyHistory,
 } from "../../lib/json-patch";
 import type { JsonValue, Patch, History } from "../../lib/json-patch";
+import { setHandoff } from "../../lib/handoff";
 import JsonTree from "./JsonTree";
 import { CarbonAd } from "../../components/CarbonAd";
 import { GoogleAd } from "../../components/GoogleAd";
@@ -111,6 +113,7 @@ const T = {
 export default function InspectPage() {
   const { lang, toggle } = useLang();
   const t = T[lang];
+  const router = useRouter();
 
   const [state, setState] = useState<State>("idle");
   const [dragging, setDragging] = useState(false);
@@ -377,7 +380,20 @@ export default function InspectPage() {
                         </table>
                       </div>
                       <div style={{ marginTop: 16, textAlign: "center" }}>
-                        <Link href="/compress" className="btn btn-primary">{t.topCta}</Link>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          onClick={() => {
+                            setHandoff({
+                              json: json as Record<string, unknown>,
+                              fileName,
+                              size: derived.serialized.length,
+                            });
+                            router.push("/compress");
+                          }}
+                        >
+                          {t.topCta}
+                        </button>
                       </div>
                     </>
                   )}
