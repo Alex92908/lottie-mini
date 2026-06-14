@@ -43,7 +43,42 @@ const T = {
     before: "Before", after: "After", ratio: "Ratio",
     download: "↓ Download", loadAnother: "Load another",
     origLabel: "Original", compLabel: "Compressed",
-    preview: "Preview", inspect: "Inspect", github: "GitHub ↗", langBtn: "中文",
+    preview: "Preview", inspect: "Inspect", guide: "Guide", github: "GitHub ↗", langBtn: "中文",
+    faqHeading: "Frequently asked questions",
+    faqs: [
+      {
+        q: "Is my file uploaded anywhere?",
+        a: "No. The compressor, preview tool, and inspector all run entirely in your browser. There is no server-side processing — once the page loads, you can disconnect from the network and everything still works. Your animation never leaves your device.",
+      },
+      {
+        q: "What's the size limit?",
+        a: "There is no hard limit imposed by the tool itself. The practical ceiling depends on your browser's memory: most modern machines handle 100–200 MB Lottie files comfortably, and we've seen successful runs on files over 500 MB. The compression pipeline streams frame-by-frame rather than holding everything in memory at once.",
+      },
+      {
+        q: "Will the compressed file play in lottie-web, lottie-react, or LottieFiles?",
+        a: "Yes. The compressor produces standard Lottie JSON (or dotLottie zip) output. Every modern player — lottie-web, lottie-react, lottie-react-native, Rive's Lottie player, Bodymovin-native iOS/Android — accepts the output without configuration changes.",
+      },
+      {
+        q: "What's the difference between the four presets?",
+        a: "Quality first uses all frames at WebP quality 75 — best fidelity, typical 3% of original size. Balanced (the default) keeps every other frame at quality 75 — typical 1.5%. Smallest keeps every other frame at quality 70 and resizes to 600px wide — typical 1%. Lossless uses WebP lossless encoding with no frame skipping — typical 50–70%, useful for files that need pixel-perfect playback.",
+      },
+      {
+        q: "Why isn't my Lottie file shrinking much?",
+        a: "If embedded image assets are less than 20% of the file, the compressor has nothing to work with. Use the Inspector to see the byte breakdown. Pure-vector Lottie files are already optimally small.",
+      },
+      {
+        q: "Does it support dotLottie (.lottie) files?",
+        a: "Yes. The compressor, preview, and inspector all accept both .json and .lottie input. When you input a .lottie file, you can download the compressed result as .lottie too, preserving the original manifest and any non-animation entries.",
+      },
+      {
+        q: "Is there a CLI or a way to batch process many files?",
+        a: "The same compression logic is packaged as a Python + PyQt6 desktop GUI in the open-source repository. It supports batch processing and runs entirely offline. A standalone npm CLI is on the roadmap.",
+      },
+      {
+        q: "Why does the compressor make my animation slightly slower?",
+        a: "It shouldn't. The pipeline rewrites the layer ip/op/st values to account for any frame skipping, so the wall-clock duration stays identical. If you see a timing change, please open an issue with the source file.",
+      },
+    ],
     errTitle: "Error",
   },
   zh: {
@@ -70,7 +105,42 @@ const T = {
     before: "压缩前", after: "压缩后", ratio: "压缩比",
     download: "↓ 下载", loadAnother: "重新加载",
     origLabel: "原始", compLabel: "压缩后",
-    preview: "预览对比", inspect: "文件分析", github: "GitHub ↗", langBtn: "EN",
+    preview: "预览对比", inspect: "文件分析", guide: "使用指南", github: "GitHub ↗", langBtn: "EN",
+    faqHeading: "常见问题",
+    faqs: [
+      {
+        q: "我的文件会被上传到任何地方吗?",
+        a: "不会。压缩、预览、分析三个工具完全在你的浏览器里运行。没有服务器端处理——页面加载完之后,你可以断开网络,所有功能仍然能用。你的动画文件永远不会离开你的设备。",
+      },
+      {
+        q: "有大小限制吗?",
+        a: "工具本身没有硬性限制。实际上限取决于浏览器内存:大多数现代电脑能舒服地处理 100–200 MB 的 Lottie 文件,我们也见过 500 MB 以上文件成功跑完的案例。压缩管线是逐帧流式处理的,不会把所有数据同时塞进内存。",
+      },
+      {
+        q: "压缩后的文件能在 lottie-web、lottie-react、LottieFiles 里播放吗?",
+        a: "可以。压缩器产出标准的 Lottie JSON(或 dotLottie zip)。所有现代播放器——lottie-web、lottie-react、lottie-react-native、Rive 的 Lottie 播放器、Bodymovin 的 iOS/Android 原生播放器——都能无需任何配置改动直接消费输出。",
+      },
+      {
+        q: "四个预设的区别是什么?",
+        a: "「质量优先」使用全帧 + WebP 质量 75——保真度最高,典型大小为原始的 3%。「均衡」(默认)隔帧抽帧 + 质量 75——典型 1.5%。「极小」隔帧抽帧 + 质量 70 + 缩放到 600px 宽——典型 1%。「无损」使用 WebP 无损编码不抽帧——典型 50-70%,适合需要像素级精确播放的场景。",
+      },
+      {
+        q: "我的 Lottie 文件为什么压不下去?",
+        a: "如果内嵌图像资源占文件不到 20%,压缩器就没有可操作的空间。用 Inspector 工具查看字节构成。纯矢量 Lottie 本身已经达到最优体积。",
+      },
+      {
+        q: "支持 dotLottie (.lottie) 格式吗?",
+        a: "支持。压缩、预览、分析都接受 .json 和 .lottie 输入。当你输入 .lottie 文件时,可以选择压缩后的结果也以 .lottie 格式下载,保留原始 manifest 和任何非动画条目。",
+      },
+      {
+        q: "有命令行工具或者批量处理的方法吗?",
+        a: "同样的压缩逻辑被打包成 Python + PyQt6 桌面 GUI,在开源仓库里。它支持批量处理,完全离线运行。独立的 npm CLI 在 roadmap 上。",
+      },
+      {
+        q: "压缩后动画为什么变慢了一点?",
+        a: "理论上不会。管线会重写图层的 ip/op/st 值来抵消任何抽帧,所以墙钟时长保持完全一致。如果你看到时序变化,请带上原始文件提 issue。",
+      },
+    ],
     errTitle: "错误",
   },
 } as const;
@@ -201,6 +271,7 @@ export default function Home() {
           <div className="nav-links">
             <Link href="/preview">{t.preview}</Link>
             <Link href="/inspect">{t.inspect}</Link>
+            <Link href="/guide">{t.guide}</Link>
             <a href={GITHUB} target="_blank" rel="noopener noreferrer">{t.github}</a>
             <button className="lang-toggle" onClick={toggle}>{t.langBtn}</button>
           </div>
@@ -385,6 +456,20 @@ export default function Home() {
                 </>
               )}
             </div>
+          )}
+          {/* FAQ — visible when idle so AdSense sees content */}
+          {state === "idle" && (
+            <section className="faq-list">
+              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 8, marginTop: 60 }}>
+                {t.faqHeading}
+              </h2>
+              {t.faqs.map((f, i) => (
+                <div key={i} className="faq-item">
+                  <div className="faq-q">{f.q}</div>
+                  <p className="faq-a">{f.a}</p>
+                </div>
+              ))}
+            </section>
           )}
         </div>
       </main>

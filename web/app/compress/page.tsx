@@ -223,6 +223,7 @@ export default function CompressPage() {
         <div className="nav-inner">
           <span className="nav-logo">lottie<span>-mini</span></span>
           <div className="nav-links">
+            <Link href="/guide">{lang === "en" ? "Guide" : "指南"}</Link>
             <Link href="/">{t.back}</Link>
             <button className="lang-toggle" onClick={toggle}>
               {lang === "en" ? "中文" : "EN"}

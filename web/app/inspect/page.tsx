@@ -13,7 +13,6 @@ import type { JsonValue, Patch, History } from "../../lib/json-patch";
 import { setHandoff } from "../../lib/handoff";
 import JsonTree from "./JsonTree";
 import { CarbonAd } from "../../components/CarbonAd";
-import { GoogleAd } from "../../components/GoogleAd";
 
 type State = "idle" | "loaded" | "error";
 
@@ -62,6 +61,25 @@ const T = {
     edited: "edited",
     issues: "Validation",
     issuesNone: "No issues found.",
+    guide: "Guide",
+
+    aboutH: "About the Lottie Inspector",
+    aboutP1:
+      "Lottie files are JSON documents that describe vector animations exported from After Effects. When designers use vector-only effects, the resulting file is typically a few kilobytes. But when an animation includes effects that can't be expressed as vectors — particle systems, fluid dynamics, image-based textures — the Bodymovin exporter embeds each frame as a base64-encoded PNG inside the JSON. A short 5-second animation at 30 fps can easily exceed 50 MB this way.",
+    aboutP2:
+      "The Inspector tells you exactly where the bytes go. It parses the JSON locally in your browser, separates the embedded raster bytes from the vector and structural data, and ranks the embedded image assets by size so you can spot the worst offenders. The editor lets you make changes directly — strip a redundant asset, lower the frame rate, fix a typo — with undo/redo and live validation against the basic Lottie schema.",
+
+    howH: "How the analysis works",
+    how1H: "Parse the file",
+    how1B: "JSON files are parsed natively; .lottie containers are unzipped in-browser using fflate and the first animation entry is extracted. Nothing leaves your machine.",
+    how2H: "Walk the asset table",
+    how2B: "Every entry in the assets array is inspected. Assets whose p field is a data: URL are treated as embedded raster; their base64 length contributes directly to the file's total bytes.",
+    how3H: "Sum and rank",
+    how3B: "Vector vs raster percentages are computed from byte counts, not asset counts. The asset table sorts by raw JSON footprint, which is what actually drives file size — a smaller decoded image with longer base64 padding can outweigh a visually larger one.",
+
+    safetyH: "Editing safely",
+    safetyP:
+      "Every value edit is type-locked: a number stays a number, a string stays a string. This prevents the most common way to break a Lottie file with a careless edit. The validator checks structural sanity — required fields fr, w, h, ip, op are present and numeric; the frame range is valid; layer refId references still match an existing asset id — and flags problems inline so you can fix them before downloading.",
   },
   zh: {
     title: "Lottie 分析与编辑器",
@@ -107,6 +125,25 @@ const T = {
     edited: "已修改",
     issues: "校验",
     issuesNone: "未发现问题。",
+    guide: "使用指南",
+
+    aboutH: "关于 Lottie 分析工具",
+    aboutP1:
+      "Lottie 文件本质是描述矢量动画的 JSON 文档,从 After Effects 通过 Bodymovin 插件导出。纯矢量动画通常只有几 KB。但只要动画里用到了无法用矢量表达的效果——粒子、流体、位图纹理——Bodymovin 会把每一帧 PNG 用 base64 编码内嵌进 JSON。一个 5 秒 30fps 的动画就能轻松超过 50 MB。",
+    aboutP2:
+      "Inspector 告诉你每个字节去哪儿了。它在你的浏览器本地解析 JSON,把内嵌位图字节和矢量、结构数据分开统计,并按体积对内嵌图片资源排序,让最糟糕的元凶一眼可见。编辑器允许你直接修改——删掉一个多余资源、降低帧率、修正一个拼写错误——支持撤销/重做和基本 Lottie schema 校验。",
+
+    howH: "分析原理",
+    how1H: "解析文件",
+    how1B: "`.json` 文件直接 JSON 解析;`.lottie` 容器用 fflate 在浏览器里解压,提取第一个动画条目。不发送到任何服务器。",
+    how2H: "遍历资源表",
+    how2B: "扫描 assets 数组的每一项。`p` 字段是 `data:` URL 的视为内嵌位图,base64 字符串长度直接计入文件总字节。",
+    how3H: "汇总与排序",
+    how3B: "矢量 vs 位图百分比按字节数计算,而非资源个数。资源表按 JSON 原始占用排序,因为这才是真正决定文件大小的——一个解码后较小但 base64 padding 较长的图,可能比视觉上更大的图占用更多 JSON 字节。",
+
+    safetyH: "安全编辑",
+    safetyP:
+      "每一次值修改都是类型锁定的:数字保持是数字,字符串保持是字符串。这避免了手抖改坏 Lottie 最常见的方式。校验器检查结构完整性——必需字段 `fr`、`w`、`h`、`ip`、`op` 是否存在且为数字;帧范围是否有效;图层 refId 引用是否仍指向存在的资源 id——并把问题内联标出,让你下载前修好。",
   },
 } as const;
 
@@ -241,6 +278,7 @@ export default function InspectPage() {
             <img src="/logo-text.svg" alt="lottie-mini" height={36} style={{ display: "block" }} />
           </Link>
           <div className="nav-links">
+            <Link href="/guide">{t.guide}</Link>
             <Link href="/">{t.back}</Link>
             <button className="lang-toggle" onClick={toggle}>
               {lang === "en" ? "中文" : "EN"}
@@ -424,9 +462,24 @@ export default function InspectPage() {
             </>
           )}
 
+          <article className="page-prose">
+            <h2>{t.aboutH}</h2>
+            <p>{t.aboutP1}</p>
+            <p>{t.aboutP2}</p>
+
+            <h2>{t.howH}</h2>
+            <ol>
+              <li><strong>{t.how1H}.</strong> {t.how1B}</li>
+              <li><strong>{t.how2H}.</strong> {t.how2B}</li>
+              <li><strong>{t.how3H}.</strong> {t.how3B}</li>
+            </ol>
+
+            <h2>{t.safetyH}</h2>
+            <p>{t.safetyP}</p>
+          </article>
+
           <div className="ad-row">
             <CarbonAd />
-            <GoogleAd />
           </div>
         </div>
       </main>
