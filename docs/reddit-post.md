@@ -1,6 +1,6 @@
 # I compressed a 70 MB Lottie file down to 800 KB — here's how it works
 
-> **Try it:** https://www.lottie-mini.com  
+> **Try it:** https://lottie-mini.com  
 > **GitHub:** https://github.com/Alex92908/lottie-mini  
 > Supports Lottie JSON and dotLottie (.lottie) · No size limit · No upload · 100% local
 
@@ -102,12 +102,12 @@ def load_lottie_json(path):
 
 I packaged all of this into two things:
 
-**🗜️ Compressor (https://www.lottie-mini.com)**
+**🗜️ Compressor (https://lottie-mini.com)**
 - Drag and drop Lottie JSON or .lottie files
 - **No size limit** — LottieFiles' official tooling caps at 20 MB, this doesn't
 - Nothing uploaded; everything runs locally in your browser
 
-**🎬 Preview tool (https://www.lottie-mini.com/preview)**
+**🎬 Preview tool (https://lottie-mini.com/preview)**
 
 While building the compressor I realized "preview a Lottie file online" is its own under-served problem — most online viewers require a login or cap uploads at 5-10 MB. So I broke Preview out into its own page:
 

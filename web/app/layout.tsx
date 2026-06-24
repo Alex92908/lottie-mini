@@ -5,7 +5,7 @@ import { LangProvider } from "../lib/LangContext";
 import "./globals.css";
 
 const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT ?? "";
-const BASE = "https://www.lottie-mini.com";
+const BASE = "https://lottie-mini.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),

@@ -1,8 +1,8 @@
 # lottie-mini 推广清单
 
 **两个免费工具一起推:**
-- 🗜️ 压缩:https://www.lottie-mini.com — 70MB → 1MB 以内
-- 🎬 预览:https://www.lottie-mini.com/preview — 免登录、无大小限制、可左右并排对比
+- 🗜️ 压缩:https://lottie-mini.com — 70MB → 1MB 以内
+- 🎬 预览:https://lottie-mini.com/preview — 免登录、无大小限制、可左右并排对比
 
 代码:https://github.com/Alex92908/lottie-mini
 

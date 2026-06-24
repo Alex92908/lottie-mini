@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-const URL_ = "https://www.lottie-mini.com/inspect";
+const URL_ = "https://lottie-mini.com/inspect";
 
 export const metadata: Metadata = {
   title: "Lottie Inspector — Analyze JSON structure & find what makes files big",

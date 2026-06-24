@@ -1,6 +1,6 @@
 # 我把 70MB 的 Lottie 压到 800KB——一个纯浏览器端压缩工具的实现原理
 
-> 在线体验：https://www.lottie-mini.com  
+> 在线体验：https://lottie-mini.com  
 > 开源地址：https://github.com/Alex92908/lottie-mini  
 > 支持 Lottie JSON 和 dotLottie (.lottie)，无大小限制，不上传，100% 本地运行
 
@@ -197,12 +197,12 @@ async function parseDotLottie(buf: ArrayBuffer) {
 
 上面这些逻辑我打包成了两个工具：
 
-**🗜️ 压缩工具（https://www.lottie-mini.com）**
+**🗜️ 压缩工具（https://lottie-mini.com）**
 - 拖入文件直接压缩，支持 Lottie JSON 和 dotLottie
 - **无大小限制**（LottieFiles 官方限制 20MB，这个没有）
 - 不上传文件，完全本地运行
 
-**🎬 预览工具（https://www.lottie-mini.com/preview）**
+**🎬 预览工具（https://lottie-mini.com/preview）**
 
 顺便提一下:做完压缩后我发现"在线本地预览 Lottie"本身也是个独立刚需——官方预览器要登录、限大小,本机播放又得起 demo 项目。所以 Preview 单独做成了一个页面:
 
@@ -240,5 +240,5 @@ async function parseDotLottie(buf: ArrayBuffer) {
 
 ---
 
-欢迎试用：https://www.lottie-mini.com  
+欢迎试用：https://lottie-mini.com  
 觉得有用的话点个 GitHub Star ⭐：https://github.com/Alex92908/lottie-mini

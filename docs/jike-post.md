@@ -14,8 +14,8 @@
 
 干脆自己写了两个,纯浏览器跑,不上传服务器,没有大小限制:
 
-🗜️ 压缩:https://www.lottie-mini.com — 70MB → 820KB
-🎬 预览:https://www.lottie-mini.com/preview — 可以左右并排对比两个文件
+🗜️ 压缩:https://lottie-mini.com — 70MB → 820KB
+🎬 预览:https://lottie-mini.com/preview — 可以左右并排对比两个文件
 
 源码:https://github.com/Alex92908/lottie-mini
 
@@ -38,8 +38,8 @@ Lottie 体积超大的根源不是矢量动画,是设计师在 AE 里偷懒用�
 
 **预览工具** 解决另一个痛点:压完后怎么验证动画没崩?左右并排播两个文件就行了。也支持纯预览(不压缩),没有大小限制,比官方在线预览器宽松多了。
 
-🗜️ https://www.lottie-mini.com
-🎬 https://www.lottie-mini.com/preview
+🗜️ https://lottie-mini.com
+🎬 https://lottie-mini.com/preview
 
 100% 本地。
 
@@ -63,7 +63,7 @@ Lottie 体积超大的根源不是矢量动画,是设计师在 AE 里偷懒用�
 设计师朋友们:导出 Lottie 后想本地预览一下效果,但官方 LottieFiles 在线预览器有上传大小限制,而且要登录。
 
 写了个免登录、无大小上限、纯本地跑的:
-https://www.lottie-mini.com/preview
+https://lottie-mini.com/preview
 
 支持 .json 和 .lottie,还能左右并排播两个版本对比(改一版前后看差异特别方便)。
 

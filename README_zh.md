@@ -2,12 +2,12 @@
 
 把内嵌 PNG 帧序列的 Lottie 文件压缩 50–100 倍，带桌面 GUI。
 
-[![项目主页](https://img.shields.io/badge/主页-lottie--mini.com-7c6dfa?style=flat-square&logo=vercel)](https://www.lottie-mini.com)
-[![在线预览工具](https://img.shields.io/badge/预览工具-lottie--mini.com%2Fpreview-4ade80?style=flat-square&logo=vercel)](https://www.lottie-mini.com/preview)
+[![项目主页](https://img.shields.io/badge/主页-lottie--mini.com-7c6dfa?style=flat-square&logo=vercel)](https://lottie-mini.com)
+[![在线预览工具](https://img.shields.io/badge/预览工具-lottie--mini.com%2Fpreview-4ade80?style=flat-square&logo=vercel)](https://lottie-mini.com/preview)
 [![English](https://img.shields.io/badge/docs-English-blue?style=flat-square)](README.md)
 
-> **🌐 项目主页：** https://www.lottie-mini.com
-> **🎬 在线预览工具：** https://www.lottie-mini.com/preview
+> **🌐 项目主页：** https://lottie-mini.com
+> **🎬 在线预览工具：** https://lottie-mini.com/preview
 
 ---
 
@@ -91,7 +91,7 @@ python compress_lottie_qt.py
 
 ![在线预览工具](docs/preview_zh.png)
 
-→ https://www.lottie-mini.com/preview
+→ https://lottie-mini.com/preview
 
 ---
 

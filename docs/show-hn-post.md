@@ -40,7 +40,7 @@ Typical results: 70MB → ~800KB at quality 80 with 30fps target (50–100× dep
 
 Tech: Next.js for the static landing, plain TS for the compression pipeline, libwebp.js (WASM) for encoding. The compression logic is also packaged as a standalone Python GUI in the same repo for batch jobs.
 
-Site: https://www.lottie-mini.com
+Site: https://lottie-mini.com
 Code: https://github.com/Alex92908/lottie-mini
 
 Happy to answer questions about the encoding pipeline or why I didn't just use AVIF (short answer: lottie-web doesn't decode AVIF yet).

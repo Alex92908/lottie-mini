@@ -38,7 +38,7 @@
 
 ## 工具:lottie-mini
 
-地址:https://www.lottie-mini.com
+地址:https://lottie-mini.com
 
 它做的事情其实就三步:
 
@@ -52,7 +52,7 @@
 
 ## 实际使用流程
 
-1. 打开 https://www.lottie-mini.com,把 `.json` 或 `.lottie` 文件拖进去
+1. 打开 https://lottie-mini.com,把 `.json` 或 `.lottie` 文件拖进去
 2. 选一个预设(WeChat 小程序 2MB / 移动端 H5 1MB / 极致压缩等)
 3. 或者手动调质量(60-90)和帧率(15/24/30)
 4. 点压缩,等几秒,下载
@@ -65,7 +65,7 @@
 
 所以我把 Preview 也做成了一个独立页面:
 
-🎬 https://www.lottie-mini.com/preview
+🎬 https://lottie-mini.com/preview
 
 它能做的事:
 

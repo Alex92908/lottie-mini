@@ -16,7 +16,7 @@ Every existing Lottie optimizer either crashed, or didn't touch it (they only op
 
 So I built one that runs 100% in the browser → 70 MB to under 1 MB:
 
-https://www.lottie-mini.com
+https://lottie-mini.com
 
 🧵👇
 
@@ -44,12 +44,12 @@ Companion tool: a side-by-side Lottie preview at /preview
 Drop any two .json or .lottie files, watch them play side by side. No login, no size limit.
 
 Useful for compression QA, but also just a no-friction online Lottie viewer:
-https://www.lottie-mini.com/preview
+https://lottie-mini.com/preview
 
 **Tweet 5 (CTA)**
 Built it because I needed it. Free, no signup, no upload, no size cap.
 
-Try it on your largest Lottie file → https://www.lottie-mini.com
+Try it on your largest Lottie file → https://lottie-mini.com
 
 RTs appreciated 🙏
 
@@ -63,7 +63,7 @@ Same animation. Same playback.
 
 Built a browser-based Lottie compressor because nothing else could handle files this big without crashing or uploading them to a server.
 
-https://www.lottie-mini.com 🧵
+https://lottie-mini.com 🧵
 
 **Tweet 2**
 Why are some Lottie files 70 MB?
@@ -85,9 +85,9 @@ Done in a Web Worker. WebAssembly does the WebP encoding. Nothing uploaded.
 
 **Tweet 4**
 Free, open source, no signup:
-🌐 https://www.lottie-mini.com
+🌐 https://lottie-mini.com
 📦 https://github.com/Alex92908/lottie-mini
-🎬 Side-by-side preview: https://www.lottie-mini.com/preview
+🎬 Side-by-side preview: https://lottie-mini.com/preview
 
 ---
 
@@ -99,7 +99,7 @@ Built a Lottie compressor that runs 100% in your browser.
 
 The trick: re-encode embedded PNG frames to WebP, drop frames, rewrite the timeline.
 
-https://www.lottie-mini.com
+https://lottie-mini.com
 
 [attach before/after screenshot]
 
@@ -122,4 +122,4 @@ Built a free one that doesn't:
 - Side-by-side: drop two files to compare versions
 - Runs 100% in your browser
 
-https://www.lottie-mini.com/preview
+https://lottie-mini.com/preview
