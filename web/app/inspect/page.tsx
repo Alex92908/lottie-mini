@@ -13,6 +13,7 @@ import type { JsonValue, Patch, History } from "../../lib/json-patch";
 import { setHandoff } from "../../lib/handoff";
 import JsonTree from "./JsonTree";
 import { CarbonAd } from "../../components/CarbonAd";
+import { Footer } from "../../components/Footer";
 
 type State = "idle" | "loaded" | "error";
 
@@ -484,14 +485,7 @@ export default function InspectPage() {
         </div>
       </main>
 
-      <footer>
-        <div className="container">
-          <p style={{ fontSize: 13, color: "var(--muted)" }}>
-            lottie-mini ·{" "}
-            <a href="https://github.com/Alex92908/lottie-mini" target="_blank" rel="noopener noreferrer">GitHub</a>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }

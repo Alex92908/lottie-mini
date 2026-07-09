@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useLang } from "../../lib/LangContext";
 import { CarbonAd } from "../../components/CarbonAd";
+import { Footer } from "../../components/Footer";
 import LottiePreview from "./LottiePlayer";
 
 export default function PreviewPage() {
@@ -123,14 +124,7 @@ export default function PreviewPage() {
         </div>
       </main>
 
-      <footer>
-        <div className="container">
-          <p style={{ fontSize: 13, color: "var(--muted)" }}>
-            lottie-mini ·{" "}
-            <a href="https://github.com/Alex92908/lottie-mini" target="_blank" rel="noopener noreferrer">GitHub</a>
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
